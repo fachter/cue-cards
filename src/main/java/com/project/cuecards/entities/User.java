@@ -16,6 +16,7 @@ import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "userAccount")
 public class User extends BaseEntity implements UserDetails {
 
     @NotBlank

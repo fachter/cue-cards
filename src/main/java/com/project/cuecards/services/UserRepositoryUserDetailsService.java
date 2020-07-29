@@ -1,9 +1,7 @@
 package com.project.cuecards.services;
 
-import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.UserGateway;
-import com.project.cuecards.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
