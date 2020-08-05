@@ -54,7 +54,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
         for (FolderViewModel folderViewModel : folderViewModels) {
-            if (folderViewModel.id == 0) {
+            if (folderViewModel.ID == 0) {
                 Folder folder = getFolderFromViewModel(folderViewModel, rootFolder);
                 foldersToPersist.add(folder);
                 addFoldersToList(folderViewModel.subFolders, folder);
@@ -69,7 +69,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private Folder getFolderById(FolderViewModel folderViewModel, Folder rootFolder) {
         for (Folder folder : existingFolders) {
-            if (folder.getId().equals(folderViewModel.id))
+            if (folder.getId().equals(folderViewModel.ID))
                 return folder;
         }
         return getFolderFromViewModel(folderViewModel, rootFolder);
@@ -93,9 +93,9 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
         CueCard cueCard = new CueCard();
-        cueCard.setQuestion(cardViewModel.question);
+        cueCard.setQuestion(cardViewModel.questionText);
         cueCard.setAnswer(cardViewModel.answer);
-        cueCard.setTopic(cardViewModel.topic);
+        cueCard.setTopic(cardViewModel.cardTopic);
         cueCard.setCreatedBy(user);
         cueCard.setSet(set);
         return cueCard;

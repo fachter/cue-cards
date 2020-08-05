@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FolderViewModel {
 
-    public Long id;
+    public Long ID;
     public String name;
     public boolean isFolder = true;
     public ArrayList<FolderViewModel> subFolders = new ArrayList<>();

@@ -21,7 +21,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,23 +52,23 @@ public class SaveUsersHomeDataUseCaseTest {
     private FolderViewModel createSetViewModel(String setName) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.id = 0L;
+        setViewModel.ID = 0L;
         setViewModel.name = setName;
         return setViewModel;
     }
 
     private FolderViewModel createFolderViewModel(String folderName) {
         FolderViewModel folderViewModel = new FolderViewModel();
-        folderViewModel.id = 0L;
+        folderViewModel.ID = 0L;
         folderViewModel.name = folderName;
         return folderViewModel;
     }
 
     private CueCardViewModel createCueCardViewModel(String question, String answer) {
         CueCardViewModel card = new CueCardViewModel();
-        card.id = 0L;
-        card.topic = "Topic";
-        card.question = question;
+        card.cardID = 0L;
+        card.cardTopic = "Topic";
+        card.questionText = question;
         card.answer = answer;
         return card;
     }
@@ -264,7 +263,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderAlreadyExists_thenEdit() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("existingFolder");
-        folderViewModel.id = 5L;
+        folderViewModel.ID = 5L;
         viewModel.folders.add(folderViewModel);
         Folder folder = new Folder();
         folder.setId(5L);
@@ -286,7 +285,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderHasIdButDoesNotExist_thenAdd() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("test");
-        folderViewModel.id = 1L;
+        folderViewModel.ID = 1L;
         viewModel.folders.add(folderViewModel);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
 

@@ -84,7 +84,7 @@ class GetUsersHomeDataUseCaseTest {
         expectedFolders.add(folder);
         prepareMocks();
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.id = (long) 1;
+        expectedFolderViewModel.ID = (long) 1;
         expectedFolderViewModel.name = "Test Folder";
         expectedViewModel.folders.add(expectedFolderViewModel);
 
@@ -105,7 +105,7 @@ class GetUsersHomeDataUseCaseTest {
 
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.id = (long) 1;
+        expectedSetViewModel.ID = (long) 1;
         expectedSetViewModel.name = "Test Set";
         expectedViewModel.folders.add(expectedSetViewModel);
 
@@ -130,11 +130,11 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.id = 1L;
+        expectedFolderViewModel.ID = 1L;
         expectedFolderViewModel.name = "FolderInRoot";
         expectedFolderViewModel.subFolders = new ArrayList<>();
         FolderViewModel expectedSubFolderViewModel = new FolderViewModel();
-        expectedSubFolderViewModel.id = 2L;
+        expectedSubFolderViewModel.ID = 2L;
         expectedSubFolderViewModel.name = "SubFolder";
         expectedFolderViewModel.subFolders.add(expectedSubFolderViewModel);
         expectedViewModel.folders.add(expectedFolderViewModel);
@@ -161,12 +161,12 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.id = 1L;
+        expectedFolderViewModel.ID = 1L;
         expectedFolderViewModel.name = "FolderInRoot";
         expectedFolderViewModel.subFolders = new ArrayList<>();
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.id = 2L;
+        expectedSetViewModel.ID = 2L;
         expectedSetViewModel.name = "SetInFolder";
         expectedFolderViewModel.subFolders.add(expectedSetViewModel);
         expectedViewModel.folders.add(expectedFolderViewModel);
@@ -196,13 +196,13 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         CueCardViewModel expectedCueCardViewModel = new CueCardViewModel();
-        expectedCueCardViewModel.id = 10L;
-        expectedCueCardViewModel.question = "Frage";
+        expectedCueCardViewModel.cardID = 10L;
+        expectedCueCardViewModel.questionText = "Frage";
         expectedCueCardViewModel.answer = "Antwort";
-        expectedCueCardViewModel.topic = "some Topic";
+        expectedCueCardViewModel.cardTopic = "some Topic";
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.id = 1L;
+        expectedSetViewModel.ID = 1L;
         expectedSetViewModel.name = "Set";
         expectedSetViewModel.cueCards = new ArrayList<>();
         expectedSetViewModel.cueCards.add(expectedCueCardViewModel);
@@ -298,9 +298,9 @@ class GetUsersHomeDataUseCaseTest {
 
     private CueCardViewModel getNewCardViewModel(long i) {
         CueCardViewModel cardViewModel = new CueCardViewModel();
-        cardViewModel.id = i;
-        cardViewModel.topic = "Topic";
-        cardViewModel.question = "Frage" + i;
+        cardViewModel.cardID = i;
+        cardViewModel.cardTopic = "Topic";
+        cardViewModel.questionText = "Frage" + i;
         cardViewModel.answer = "Antwort" + i;
         return cardViewModel;
     }
@@ -308,14 +308,14 @@ class GetUsersHomeDataUseCaseTest {
     private FolderViewModel getNewSetViewModel(long i) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.id = i;
+        setViewModel.ID = i;
         setViewModel.name = "Set" + i;
         return setViewModel;
     }
 
     private FolderViewModel getNewFolderViewModel(long i) {
         FolderViewModel folderViewModel1 = new FolderViewModel();
-        folderViewModel1.id = i;
+        folderViewModel1.ID = i;
         folderViewModel1.name = "Folder" + i;
         return folderViewModel1;
     }
