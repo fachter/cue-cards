@@ -3,14 +3,20 @@ package com.project.cuecards.entities;
 import com.project.cuecards.enums.CardType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class CueCard extends BaseEntity {
 
     private String topic;
     private String question;
-    private String answer;
+    private String solution;
     private int level;
+    private CardType cardType = CardType.FT;
+
+    @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL)
+    private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Folder set;
@@ -33,12 +39,12 @@ public class CueCard extends BaseEntity {
         return this;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getSolution() {
+        return solution;
     }
 
-    public CueCard setAnswer(String answer) {
-        this.answer = answer;
+    public CueCard setSolution(String solution) {
+        this.solution = solution;
         return this;
     }
 
@@ -57,6 +63,24 @@ public class CueCard extends BaseEntity {
 
     public CueCard setSet(Folder set) {
         this.set = set;
+        return this;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public CueCard setAnswers(List<Answer> answers) {
+        this.answers = answers;
+        return this;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public CueCard setCardType(CardType cardType) {
+        this.cardType = cardType;
         return this;
     }
 }

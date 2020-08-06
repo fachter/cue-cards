@@ -1,6 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.SaveUsersHomeData;
+import com.project.cuecards.entities.Answer;
 import com.project.cuecards.entities.CueCard;
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.User;
@@ -9,6 +10,7 @@ import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.FolderViewModel;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
@@ -98,13 +101,27 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
         CueCard cueCard = new CueCard()
                 .setQuestion(cardViewModel.questionText)
-                .setAnswer(cardViewModel.answer)
+                .setSolution(cardViewModel.solution)
                 .setTopic(cardViewModel.cardTopic)
                 .setLevel(cardViewModel.cardLevel)
+                .setCardType(cardViewModel.cardType)
                 .setSet(set);
-        cueCard.setUid(cardViewModel.cardID);
+        cueCard.setAnswers(getAnswersFromViewModel(cardViewModel.answers, cueCard))
+                .setUid(cardViewModel.cardID);
         cueCard.setCreatedBy(user);
         return cueCard;
+    }
+
+    private List<Answer> getAnswersFromViewModel(ArrayList<AnswerViewModel> answerViewModels, CueCard cueCard) {
+        ArrayList<Answer> answers = new ArrayList<>();
+        for (AnswerViewModel answerViewModel : answerViewModels) {
+            Answer answer = new Answer()
+                    .setCueCard(cueCard)
+                    .setText(answerViewModel.text);
+            answer.setUid(answerViewModel.ID);
+            answers.add(answer);
+        }
+        return answers;
     }
 
 }

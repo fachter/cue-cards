@@ -9,7 +9,7 @@ public class CueCardViewModel {
     public String cardID;
     public String cardTopic;
     public String questionText;
-    public String answer;
+    public String solution;
     public ArrayList<AnswerViewModel> answers = new ArrayList<>();
     public int cardLevel = 0;
     public CardType cardType = CardType.FT;

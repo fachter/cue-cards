@@ -1,14 +1,17 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.SaveUsersHomeData;
+import com.project.cuecards.entities.Answer;
 import com.project.cuecards.entities.CueCard;
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.User;
+import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.FolderViewModel;
@@ -70,7 +73,7 @@ public class SaveUsersHomeDataUseCaseTest {
         card.cardID = newCardUid;
         card.cardTopic = "Topic";
         card.questionText = question;
-        card.answer = answer;
+        card.solution = answer;
         return card;
     }
 
@@ -170,7 +173,7 @@ public class SaveUsersHomeDataUseCaseTest {
                 .setSet(set)
                 .setTopic("Topic")
                 .setQuestion("testQuestion")
-                .setAnswer("testAnswer");
+                .setSolution("testAnswer");
         card.setCreatedBy(validUser);
         card.setUid(newCardUid);
         set.getCueCards().add(card);
@@ -250,14 +253,14 @@ public class SaveUsersHomeDataUseCaseTest {
         CueCard expectedCard1 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("Frage 1")
-                .setAnswer("Antwort 1")
+                .setSolution("Antwort 1")
                 .setSet(expectedSet);
         expectedCard1.setCreatedBy(validUser);
         expectedCard1.setUid(newCardUid + 1);
         CueCard expectedCard2 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("Frage 2")
-                .setAnswer("Antwort 2")
+                .setSolution("Antwort 2")
                 .setSet(expectedSet);
         expectedCard2.setCreatedBy(validUser);
         expectedCard2.setUid(newCardUid+ 2);
@@ -338,14 +341,14 @@ public class SaveUsersHomeDataUseCaseTest {
         CueCard expectedC1 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("question1")
-                .setAnswer("answer1")
+                .setSolution("answer1")
                 .setLevel(3);
         expectedC1.setUid("uid5");
         expectedC1.setCreatedBy(validUser);
         CueCard expectedC2 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("question2")
-                .setAnswer("answer2")
+                .setSolution("answer2")
                 .setLevel(5);
         expectedC2.setUid("uid6");
         expectedC2.setCreatedBy(validUser);
@@ -378,5 +381,56 @@ public class SaveUsersHomeDataUseCaseTest {
 
     private Folder createSet(String name, String uid) {
         return createFolder(name, uid).setSet(true);
+    }
+
+    @Test
+    public void givenOneSetWithOneCardWithMcOrScAnswers() throws Exception {
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
+        FolderViewModel setViewModel = createSetViewModel("set");
+        setViewModel.ID = "setUid";
+        CueCardViewModel cardViewModel = new CueCardViewModel();
+        cardViewModel.questionText = "Frage";
+        cardViewModel.cardLevel = 2;
+        cardViewModel.cardID = "someCoolNewCardId";
+        cardViewModel.cardTopic = "cardTopic";
+        cardViewModel.cardType = CardType.MC;
+        AnswerViewModel answerVm1 = new AnswerViewModel();
+        answerVm1.ID = "antwort1Id";
+        answerVm1.text = "erste Antwort";
+        AnswerViewModel answerVm2 = new AnswerViewModel();
+        answerVm2.ID = "antwort2Id";
+        answerVm2.text = "zweite Antwort";
+        cardViewModel.answers.add(answerVm1);
+        cardViewModel.answers.add(answerVm2);
+        setViewModel.cueCards.add(cardViewModel);
+        viewModel.folders.add(setViewModel);
+        Folder expectedSet = createSet("set", "setUid");
+        CueCard card = new CueCard()
+                .setSet(expectedSet)
+                .setTopic("cardTopic")
+                .setCardType(CardType.MC)
+                .setQuestion("Frage")
+                .setLevel(2);
+        card.setUid("someCoolNewCardId");
+        card.setCreatedBy(validUser);
+        Answer answer1 = new Answer()
+                .setText("erste Antwort")
+                .setCueCard(card);
+        answer1.setUid("antwort1Id");
+        Answer answer2 = new Answer()
+                .setText("zweite Antwort")
+                .setCueCard(card);
+        answer2.setUid("antwort2Id");
+        card.getAnswers().add(answer1);
+        card.getAnswers().add(answer2);
+        expectedSet.getCueCards().add(card);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(folderGatewayMock, times(1)).addList(captor.capture());
+        ArrayList<Folder> actualFolders = captor.getValue();
+        assertEquals(1, actualFolders.size());
+        assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedSet);
     }
 }

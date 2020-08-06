@@ -189,7 +189,7 @@ class GetUsersHomeDataUseCaseTest {
         card.setId(10L);
         card.setTopic("some Topic");
         card.setQuestion("Frage");
-        card.setAnswer("Antwort");
+        card.setSolution("Antwort");
         card.setLevel(0);
         card.setSet(set);
         card.setCreatedBy(validUser);
@@ -200,7 +200,7 @@ class GetUsersHomeDataUseCaseTest {
         CueCardViewModel expectedCueCardViewModel = new CueCardViewModel();
         expectedCueCardViewModel.cardID = existingUid;
         expectedCueCardViewModel.questionText = "Frage";
-        expectedCueCardViewModel.answer = "Antwort";
+        expectedCueCardViewModel.solution = "Antwort";
         expectedCueCardViewModel.cardTopic = "some Topic";
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
@@ -303,7 +303,7 @@ class GetUsersHomeDataUseCaseTest {
         cardViewModel.cardID = i;
         cardViewModel.cardTopic = "Topic";
         cardViewModel.questionText = "Frage" + i;
-        cardViewModel.answer = "Antwort" + i;
+        cardViewModel.solution = "Antwort" + i;
         return cardViewModel;
     }
 
@@ -328,7 +328,7 @@ class GetUsersHomeDataUseCaseTest {
         card.setCreatedBy(validUser);
         card.setTopic("Topic");
         card.setQuestion("Frage" + i);
-        card.setAnswer("Antwort" + i);
+        card.setSolution("Antwort" + i);
         card.setLevel(1);
         return card;
     }
