@@ -32,12 +32,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class SaveUsersHomeDataUseCaseTest {
 
+    private final String newSetUid = "SomeNewSetUid";
+    private final String newFolderUid = "SomeNewFolderUid";
+    private final String newCardUid = "SomeNewCardId";
+    private final String existingUid = "SomeExistingUid";
     @Mock private FolderGateway folderGatewayMock;
     @Mock private UserGateway userGatewayMock;
-
-    @Captor
-    private ArgumentCaptor<ArrayList<Folder>> captor;
-
+    @Captor private ArgumentCaptor<ArrayList<Folder>> captor;
     private SaveUsersHomeData useCase;
     private DataViewModel viewModel;
     private final String validUsername = "validUsername";
@@ -52,21 +53,21 @@ public class SaveUsersHomeDataUseCaseTest {
     private FolderViewModel createSetViewModel(String setName) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.ID = 0L;
+        setViewModel.ID = newSetUid;
         setViewModel.name = setName;
         return setViewModel;
     }
 
     private FolderViewModel createFolderViewModel(String folderName) {
         FolderViewModel folderViewModel = new FolderViewModel();
-        folderViewModel.ID = 0L;
+        folderViewModel.ID = newFolderUid;
         folderViewModel.name = folderName;
         return folderViewModel;
     }
 
     private CueCardViewModel createCueCardViewModel(String question, String answer) {
         CueCardViewModel card = new CueCardViewModel();
-        card.cardID = 0L;
+        card.cardID = newCardUid;
         card.cardTopic = "Topic";
         card.questionText = question;
         card.answer = answer;
@@ -102,12 +103,16 @@ public class SaveUsersHomeDataUseCaseTest {
     }
 
     @Test
-    public void givenOneFolder() throws Exception {
+    public void givenOneNewFolder() throws Exception {
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
         FolderViewModel folderViewModel = createFolderViewModel("Test");
         viewModel.folders.add(folderViewModel);
         ArrayList<Folder> expectedFolders = new ArrayList<>();
         Folder folder = new Folder();
+        folder.setUid(newFolderUid);
         folder.setName("Test");
+        folder.setCreatedBy(validUser);
         expectedFolders.add(folder);
 
         useCase.save(viewModel, validUsername);
@@ -126,11 +131,8 @@ public class SaveUsersHomeDataUseCaseTest {
         viewModel.folders.add(folderViewModel);
         viewModel.folders.add(setViewModel);
         ArrayList<Folder> expectedFolders = new ArrayList<>();
-        Folder folder = new Folder();
-        folder.setName("Folder");
-        Folder set = new Folder();
-        set.setName("Set");
-        set.setSet(true);
+        Folder folder = (Folder) new Folder().setName("Folder").setUid(newFolderUid);
+        Folder set = (Folder) new Folder().setName("Set").setSet(true).setUid(newSetUid);
         expectedFolders.add(folder);
         expectedFolders.add(set);
 
@@ -145,28 +147,32 @@ public class SaveUsersHomeDataUseCaseTest {
     }
 
     @Test
-    public void givenUsernameThenAddUser() throws Exception {
+    public void givenOneFolderOneSetOneCard() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
         FolderViewModel folderVm = createFolderViewModel("testFolder");
         FolderViewModel setVm = createSetViewModel("testSet");
         CueCardViewModel cardVm = createCueCardViewModel("testQuestion", "testAnswer");
         setVm.cueCards.add(cardVm);
-        folderVm.subFolders.add(setVm);
         viewModel.folders.add(folderVm);
-        Folder folder = new Folder();
-        folder.setName("testFolder");
+        viewModel.folders.add(setVm);
+        Folder folder = new Folder()
+                .setName("testFolder");
         folder.setCreatedBy(validUser);
-        Folder set = new Folder();
-        set.setName("testSet");
-        set.setSet(true);
+        folder.setUid(newFolderUid);
+        Folder set = new Folder()
+                .setName("testSet")
+                .setSet(true)
+                .setRootFolder(null);
         set.setCreatedBy(validUser);
-        set.setRootFolder(folder);
-        CueCard card = new CueCard();
-        card.setSet(set);
-        card.setTopic("Topic");
-        card.setQuestion("testQuestion");
-        card.setAnswer("testAnswer");
+        set.setUid(newSetUid);
+        CueCard card = new CueCard()
+                .setSet(set)
+                .setTopic("Topic")
+                .setQuestion("testQuestion")
+                .setAnswer("testAnswer");
         card.setCreatedBy(validUser);
+        card.setUid(newCardUid);
         set.getCueCards().add(card);
 
         useCase.save(viewModel, validUsername);
@@ -175,32 +181,30 @@ public class SaveUsersHomeDataUseCaseTest {
         ArrayList<Folder> actualFolders = captor.getValue();
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
         assertThat(actualFolders.get(1)).usingRecursiveComparison().isEqualTo(set);
-
     }
 
     @Test
     public void givenFolderWithSubFolder() throws Exception {
         FolderViewModel folderViewModel = createFolderViewModel("Root");
         FolderViewModel subFolderViewModel = createFolderViewModel("Sub Folder");
+        subFolderViewModel.ID = "subFolderUid";
         folderViewModel.subFolders.add(subFolderViewModel);
         viewModel.folders.add(folderViewModel);
-        Folder expectedRootFolder = new Folder();
-        expectedRootFolder.setName("Root");
-        Folder expectedSubFolder = new Folder();
-        expectedSubFolder.setName("Sub Folder");
-        expectedSubFolder.setRootFolder(expectedRootFolder);
-        ArrayList<Folder> expectedFolders = new ArrayList<>();
-        expectedFolders.add(expectedRootFolder);
-        expectedFolders.add(expectedSubFolder);
+        Folder expectedRootFolder = new Folder()
+                .setName("Root");
+        expectedRootFolder.setUid(newFolderUid);
+        Folder expectedSubFolder = new Folder()
+                .setName("Sub Folder")
+                .setRootFolder(expectedRootFolder);
+        expectedSubFolder.setUid("subFolderUid");
+        expectedRootFolder.getSubFolders().add(expectedSubFolder);
 
         useCase.save(viewModel, null);
 
         verify(folderGatewayMock, times(1)).addList(captor.capture());
-        assertThat(captor.getValue()).usingRecursiveFieldByFieldElementComparator()
-                .isEqualTo(expectedFolders);
         ArrayList<Folder> actualFolders = captor.getValue();
+        assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedRootFolder);
-        assertThat(actualFolders.get(1)).usingRecursiveComparison().isEqualTo(expectedSubFolder);
     }
 
     @Test
@@ -209,19 +213,22 @@ public class SaveUsersHomeDataUseCaseTest {
         FolderViewModel setViewModel = createSetViewModel("sub set");
         folderViewModel.subFolders.add(setViewModel);
         viewModel.folders.add(folderViewModel);
-        Folder expectedRootFolder = new Folder();
-        expectedRootFolder.setName("Root");
-        Folder expectedSubSet = new Folder();
-        expectedSubSet.setName("sub set");
-        expectedSubSet.setRootFolder(expectedRootFolder);
-        expectedSubSet.setSet(true);
+        Folder expectedRootFolder = new Folder()
+                .setName("Root");
+        expectedRootFolder.setUid(newFolderUid);
+        Folder expectedSubSet = new Folder()
+                .setName("sub set")
+                .setRootFolder(expectedRootFolder)
+                .setSet(true);
+        expectedSubSet.setUid(newSetUid);
+        expectedRootFolder.getSubFolders().add(expectedSubSet);
 
         useCase.save(viewModel, null);
 
         verify(folderGatewayMock, times(1)).addList(captor.capture());
         ArrayList<Folder> actualFolders = captor.getValue();
+        assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedRootFolder);
-        assertThat(actualFolders.get(1)).usingRecursiveComparison().isEqualTo(expectedSubSet);
     }
 
     @Test
@@ -229,26 +236,31 @@ public class SaveUsersHomeDataUseCaseTest {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel setViewModel = createSetViewModel("set");
         CueCardViewModel card1 = createCueCardViewModel("Frage 1", "Antwort 1");
+        card1.cardID += "1";
         CueCardViewModel card2 = createCueCardViewModel("Frage 2", "Antwort 2");
+        card2.cardID += "2";
         setViewModel.cueCards.add(card1);
         setViewModel.cueCards.add(card2);
         viewModel.folders.add(setViewModel);
-        Folder expectedSet = new Folder();
-        expectedSet.setName("set");
-        expectedSet.setSet(true);
+        Folder expectedSet = new Folder()
+                .setName("set")
+                .setSet(true);
         expectedSet.setCreatedBy(validUser);
-        CueCard expectedCard1 = new CueCard();
-        expectedCard1.setTopic("Topic");
-        expectedCard1.setQuestion("Frage 1");
-        expectedCard1.setAnswer("Antwort 1");
-        expectedCard1.setSet(expectedSet);
+        expectedSet.setUid(newSetUid);
+        CueCard expectedCard1 = new CueCard()
+                .setTopic("Topic")
+                .setQuestion("Frage 1")
+                .setAnswer("Antwort 1")
+                .setSet(expectedSet);
         expectedCard1.setCreatedBy(validUser);
-        CueCard expectedCard2 = new CueCard();
-        expectedCard2.setTopic("Topic");
-        expectedCard2.setQuestion("Frage 2");
-        expectedCard2.setAnswer("Antwort 2");
-        expectedCard2.setSet(expectedSet);
+        expectedCard1.setUid(newCardUid + 1);
+        CueCard expectedCard2 = new CueCard()
+                .setTopic("Topic")
+                .setQuestion("Frage 2")
+                .setAnswer("Antwort 2")
+                .setSet(expectedSet);
         expectedCard2.setCreatedBy(validUser);
+        expectedCard2.setUid(newCardUid+ 2);
         expectedSet.getCueCards().add(expectedCard1);
         expectedSet.getCueCards().add(expectedCard2);
 
@@ -263,11 +275,11 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderAlreadyExists_thenEdit() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("existingFolder");
-        folderViewModel.ID = 5L;
+        folderViewModel.ID = existingUid;
         viewModel.folders.add(folderViewModel);
-        Folder folder = new Folder();
-        folder.setId(5L);
-        folder.setName("oldName");
+        Folder folder = new Folder()
+                .setName("oldName");
+        folder.setUid(existingUid);
         ArrayList<Folder> folders = new ArrayList<>();
         folders.add(folder);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
@@ -285,7 +297,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderHasIdButDoesNotExist_thenAdd() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("test");
-        folderViewModel.ID = 1L;
+        folderViewModel.ID = existingUid;
         viewModel.folders.add(folderViewModel);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
 
@@ -294,5 +306,77 @@ public class SaveUsersHomeDataUseCaseTest {
         verify(folderGatewayMock, times(1)).addList(captor.capture());
         ArrayList<Folder> actualFolders = captor.getValue();
         assertEquals(1, actualFolders.size());
+    }
+
+    @Test
+    public void givenFolderWith2SubFoldersAnd2CardsEach() throws Exception {
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        FolderViewModel f1 = createFolderViewModel("f1");
+        f1.ID = "uid1";
+        FolderViewModel f2 = createFolderViewModel("f2");
+        f2.ID = "uid2";
+        FolderViewModel s1 = createSetViewModel("s1");
+        s1.ID = "uid3";
+        FolderViewModel s2 = createSetViewModel("s2");
+        s2.ID = "uid4";
+        CueCardViewModel c1 = createCueCardViewModel("question1", "answer1");
+        c1.cardLevel = 3;
+        c1.cardID = "uid5";
+        CueCardViewModel c2 = createCueCardViewModel("question2", "answer2");
+        c2.cardLevel = 5;
+        c2.cardID = "uid6";
+        s1.cueCards.add(c1);
+        s2.cueCards.add(c2);
+        f2.subFolders.add(s2);
+        f1.subFolders.add(s1);
+        f1.subFolders.add(f2);
+        viewModel.folders.add(f1);
+        Folder expectedF1 = createFolder("f1", "uid1");
+        Folder expectedF2 = createFolder("f2", "uid2");
+        Folder expectedS1 = createSet("s1", "uid3");
+        Folder expectedS2 = createSet("s2", "uid4");
+        CueCard expectedC1 = new CueCard()
+                .setTopic("Topic")
+                .setQuestion("question1")
+                .setAnswer("answer1")
+                .setLevel(3);
+        expectedC1.setUid("uid5");
+        expectedC1.setCreatedBy(validUser);
+        CueCard expectedC2 = new CueCard()
+                .setTopic("Topic")
+                .setQuestion("question2")
+                .setAnswer("answer2")
+                .setLevel(5);
+        expectedC2.setUid("uid6");
+        expectedC2.setCreatedBy(validUser);
+
+        expectedC1.setSet(expectedS1);
+        expectedC2.setSet(expectedS2);
+        expectedS1.getCueCards().add(expectedC1);
+        expectedS2.getCueCards().add(expectedC2);
+        expectedS1.setRootFolder(expectedF1);
+        expectedS2.setRootFolder(expectedF2);
+        expectedF1.getSubFolders().add(expectedS1);
+        expectedF1.getSubFolders().add(expectedF2);
+        expectedF2.getSubFolders().add(expectedS2);
+        expectedF2.setRootFolder(expectedF1);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(folderGatewayMock, times(1)).addList(captor.capture());
+        ArrayList<Folder> actualFolders = captor.getValue();
+        assertEquals(1, actualFolders.size());
+        assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedF1);
+    }
+
+    private Folder createFolder(String name, String uid) {
+        Folder folder = new Folder().setName(name);
+        folder.setCreatedBy(validUser);
+        folder.setUid(uid);
+        return folder;
+    }
+
+    private Folder createSet(String name, String uid) {
+        return createFolder(name, uid).setSet(true);
     }
 }

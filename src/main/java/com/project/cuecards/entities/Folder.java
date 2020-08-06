@@ -16,7 +16,7 @@ public class Folder extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     private Folder rootFolder = null;
 
-    @OneToMany(mappedBy = "rootFolder")
+    @OneToMany(mappedBy = "rootFolder", cascade = CascadeType.ALL)
     private List<Folder> subFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "set", cascade = CascadeType.ALL)
@@ -26,47 +26,53 @@ public class Folder extends BaseEntity {
         return name;
     }
 
-    public void setName(String name) {
+    public Folder setName(String name) {
         this.name = name;
+        return this;
     }
 
     public AccessType getAccessType() {
         return accessType;
     }
 
-    public void setAccessType(AccessType accessType) {
+    public Folder setAccessType(AccessType accessType) {
         this.accessType = accessType;
+        return this;
     }
 
     public boolean isSet() {
         return isSet;
     }
 
-    public void setSet(boolean set) {
+    public Folder setSet(boolean set) {
         isSet = set;
+        return this;
     }
 
     public Folder getRootFolder() {
         return rootFolder;
     }
 
-    public void setRootFolder(Folder rootFolder) {
+    public Folder setRootFolder(Folder rootFolder) {
         this.rootFolder = rootFolder;
+        return this;
     }
 
     public List<Folder> getSubFolders() {
         return subFolders;
     }
 
-    public void setSubFolders(List<Folder> subFolders) {
+    public Folder setSubFolders(List<Folder> subFolders) {
         this.subFolders = subFolders;
+        return this;
     }
 
     public List<CueCard> getCueCards() {
         return cueCards;
     }
 
-    public void setCueCards(List<CueCard> cueCards) {
+    public Folder setCueCards(List<CueCard> cueCards) {
         this.cueCards = cueCards;
+        return this;
     }
 }

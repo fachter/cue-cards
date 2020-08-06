@@ -14,6 +14,7 @@ public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String uid;
 
     @CreatedDate
     private LocalDateTime createdDateTime;
@@ -28,6 +29,15 @@ public abstract class BaseEntity {
     @LastModifiedBy
     @ManyToOne
     private User lastModifiedBy;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public BaseEntity setUid(String uid) {
+        this.uid = uid;
+        return this;
+    }
 
     public Long getId() {
         return id;

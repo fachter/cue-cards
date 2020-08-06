@@ -19,32 +19,36 @@ public class CueCard extends BaseEntity {
         return topic;
     }
 
-    public void setTopic(String topic) {
+    public CueCard setTopic(String topic) {
         this.topic = topic;
+        return this;
     }
 
     public String getQuestion() {
         return question;
     }
 
-    public void setQuestion(String question) {
+    public CueCard setQuestion(String question) {
         this.question = question;
+        return this;
     }
 
     public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public CueCard setAnswer(String answer) {
         this.answer = answer;
+        return this;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public CueCard setLevel(int level) {
         this.level = level;
+        return this;
     }
 
     public Folder getSet() {

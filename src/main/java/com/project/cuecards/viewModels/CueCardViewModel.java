@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class CueCardViewModel {
 
-    public Long cardID;
+    public String cardID;
     public String cardTopic;
     public String questionText;
     public String answer;

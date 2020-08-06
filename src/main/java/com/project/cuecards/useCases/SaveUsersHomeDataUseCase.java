@@ -43,7 +43,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         } catch (InvalidArgumentException e) {
             existingFolders = new ArrayList<>();
         }
-        addFoldersToList(viewModel.folders, null);
+        addFoldersToList(viewModel.folders);
         try {
             if (foldersToPersist.size() > 0)
                 folderGateway.addList(foldersToPersist);
@@ -52,34 +52,38 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         }
     }
 
-    private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
+    private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels) {
         for (FolderViewModel folderViewModel : folderViewModels) {
-            if (folderViewModel.ID == 0) {
-                Folder folder = getFolderFromViewModel(folderViewModel, rootFolder);
-                foldersToPersist.add(folder);
-                addFoldersToList(folderViewModel.subFolders, folder);
-                addCueCardsToSet(folderViewModel, folder);
-            } else {
-                Folder existingFolder = getFolderById(folderViewModel, rootFolder);
-                existingFolder.setName(folderViewModel.name);
-                foldersToPersist.add(existingFolder);
-            }
+            Folder folder = getFolderByIdOrNewFolder(folderViewModel, null);
+            addCueCardsToSet(folderViewModel, folder);
+            addSubFolders(folderViewModel.subFolders, folder);
+            foldersToPersist.add(folder);
         }
     }
 
-    private Folder getFolderById(FolderViewModel folderViewModel, Folder rootFolder) {
+    private void addSubFolders(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
+        for (FolderViewModel folderViewModel : folderViewModels) {
+            Folder folder = getFolderByIdOrNewFolder(folderViewModel, rootFolder);
+            addCueCardsToSet(folderViewModel, folder);
+            addSubFolders(folderViewModel.subFolders, folder);
+            rootFolder.getSubFolders().add(folder);
+        }
+    }
+
+    private Folder getFolderByIdOrNewFolder(FolderViewModel folderViewModel, Folder rootFolder) {
         for (Folder folder : existingFolders) {
-            if (folder.getId().equals(folderViewModel.ID))
-                return folder;
+            if (folder.getUid().equals(folderViewModel.ID))
+                return folder.setName(folderViewModel.name);
         }
         return getFolderFromViewModel(folderViewModel, rootFolder);
     }
 
     private Folder getFolderFromViewModel(FolderViewModel folderViewModel, Folder rootFolder) {
-        Folder folder = new Folder();
-        folder.setSet(!folderViewModel.isFolder);
-        folder.setName(folderViewModel.name);
-        folder.setRootFolder(rootFolder);
+        Folder folder = new Folder()
+                .setSet(!folderViewModel.isFolder)
+                .setName(folderViewModel.name)
+                .setRootFolder(rootFolder);
+        folder.setUid(folderViewModel.ID);
         folder.setCreatedBy(user);
         return folder;
     }
@@ -92,12 +96,14 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     }
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
-        CueCard cueCard = new CueCard();
-        cueCard.setQuestion(cardViewModel.questionText);
-        cueCard.setAnswer(cardViewModel.answer);
-        cueCard.setTopic(cardViewModel.cardTopic);
+        CueCard cueCard = new CueCard()
+                .setQuestion(cardViewModel.questionText)
+                .setAnswer(cardViewModel.answer)
+                .setTopic(cardViewModel.cardTopic)
+                .setLevel(cardViewModel.cardLevel)
+                .setSet(set);
+        cueCard.setUid(cardViewModel.cardID);
         cueCard.setCreatedBy(user);
-        cueCard.setSet(set);
         return cueCard;
     }
 
