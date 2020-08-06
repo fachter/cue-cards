@@ -65,12 +65,14 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     }
 
     private void addSubFolders(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
+        ArrayList<Folder> subFolders = new ArrayList<>();
         for (FolderViewModel folderViewModel : folderViewModels) {
             Folder folder = getFolderByIdOrNewFolder(folderViewModel, rootFolder);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
-            rootFolder.getSubFolders().add(folder);
+            subFolders.add(folder);
         }
+        rootFolder.setSubFolders(subFolders);
     }
 
     private Folder getFolderByIdOrNewFolder(FolderViewModel folderViewModel, Folder rootFolder) {
@@ -78,6 +80,10 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
             if (folder.getUid().equals(folderViewModel.ID))
                 return folder.setName(folderViewModel.name);
         }
+        if (rootFolder != null)
+            for (Folder subFolder : rootFolder.getSubFolders())
+                if (subFolder.getUid().equals(folderViewModel.ID))
+                    return subFolder.setName(folderViewModel.name);
         return getFolderFromViewModel(folderViewModel, rootFolder);
     }
 
@@ -99,7 +105,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     }
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
-        CueCard cueCard = new CueCard()
+        CueCard cueCard = getCard(set, cardViewModel)
                 .setQuestion(cardViewModel.questionText)
                 .setSolution(cardViewModel.solution)
                 .setTopic(cardViewModel.cardTopic)
@@ -112,16 +118,32 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         return cueCard;
     }
 
+    private CueCard getCard(Folder set, CueCardViewModel cardViewModel) {
+        for (CueCard card : set.getCueCards()) {
+            if (card.getUid().equals(cardViewModel.cardID))
+                return card;
+        }
+        return new CueCard();
+    }
+
     private List<Answer> getAnswersFromViewModel(ArrayList<AnswerViewModel> answerViewModels, CueCard cueCard) {
         ArrayList<Answer> answers = new ArrayList<>();
         for (AnswerViewModel answerViewModel : answerViewModels) {
-            Answer answer = new Answer()
+            Answer answer = getAnswer(cueCard, answerViewModel)
                     .setCueCard(cueCard)
                     .setText(answerViewModel.text);
             answer.setUid(answerViewModel.ID);
             answers.add(answer);
         }
         return answers;
+    }
+
+    private Answer getAnswer(CueCard cueCard, AnswerViewModel answerViewModel) {
+        for (Answer answer : cueCard.getAnswers()) {
+            if (answer.getUid().equals(answerViewModel.ID))
+                return answer;
+        }
+        return new Answer();
     }
 
 }

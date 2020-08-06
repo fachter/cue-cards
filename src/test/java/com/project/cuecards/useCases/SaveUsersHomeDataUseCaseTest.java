@@ -406,14 +406,7 @@ public class SaveUsersHomeDataUseCaseTest {
         setViewModel.cueCards.add(cardViewModel);
         viewModel.folders.add(setViewModel);
         Folder expectedSet = createSet("set", "setUid");
-        CueCard card = new CueCard()
-                .setSet(expectedSet)
-                .setTopic("cardTopic")
-                .setCardType(CardType.MC)
-                .setQuestion("Frage")
-                .setLevel(2);
-        card.setUid("someCoolNewCardId");
-        card.setCreatedBy(validUser);
+        CueCard card = createCueCard(expectedSet);
         Answer answer1 = new Answer()
                 .setText("erste Antwort")
                 .setCueCard(card);
@@ -432,5 +425,66 @@ public class SaveUsersHomeDataUseCaseTest {
         ArrayList<Folder> actualFolders = captor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedSet);
+    }
+
+    private CueCard createCueCard(Folder set) {
+        CueCard card = new CueCard()
+                .setSet(set)
+                .setTopic("cardTopic")
+                .setCardType(CardType.MC)
+                .setQuestion("Frage")
+                .setLevel(2);
+        card.setUid("someCoolNewCardId");
+        card.setCreatedBy(validUser);
+        return card;
+    }
+
+    @Test
+    public void givenSaveExistingDataViewModel() throws Exception {
+        Folder folder = createFolder("folder", "folderId");
+        Folder set = createSet("set", "setId");
+        set.setRootFolder(folder);
+        CueCard card = createCueCard(set);
+        Answer answer = (Answer) new Answer()
+                .setText("answer")
+                .setCueCard(card)
+                .setUid("answerId");
+        card.getAnswers().add(answer);
+        set.getCueCards().add(card);
+        folder.getSubFolders().add(set);
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        folders.add(folder);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+
+        FolderViewModel folderVm = createFolderViewModel("changed Folder");
+        folderVm.ID = "folderId";
+        FolderViewModel setVm = createSetViewModel("changed Set");
+        setVm.ID = "setId";
+        CueCardViewModel cardVm = createCueCardViewModel("changed Frage", null);
+        cardVm.cardTopic = "changed Topic";
+        cardVm.cardType = CardType.SC;
+        cardVm.cardLevel = 3;
+        cardVm.cardID = "someCoolNewCardId";
+        AnswerViewModel answerVm = new AnswerViewModel();
+        answerVm.text = "changed answer";
+        answerVm.ID = "answerId";
+        cardVm.answers.add(answerVm);
+        setVm.cueCards.add(cardVm);
+        folderVm.subFolders.add(setVm);
+        viewModel.folders.add(folderVm);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(folderGatewayMock, times(1)).addList(captor.capture());
+        ArrayList<Folder> actualFolders = captor.getValue();
+        assertEquals(1, actualFolders.size());
+        assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
+        assertEquals("changed Folder" ,folder.getName());
+        assertEquals("changed Set" ,set.getName());
+        assertEquals("changed Frage", card.getQuestion());
+        assertEquals("changed Topic", card.getTopic());
+        assertEquals(CardType.SC, card.getCardType());
+        assertEquals("changed answer", answer.getText());
     }
 }
