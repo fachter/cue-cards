@@ -36,8 +36,7 @@ class GetUsersHomeDataUseCaseTest {
     private final User validUser = new User();
     private final DataViewModel expectedViewModel = new DataViewModel();
     private final ArrayList<Folder> expectedFolders = new ArrayList<>();
-    private String existingUid = "existingUid";
-    private String newUid = "newUid";
+    private final String existingUid = "existingUid";
 
     @BeforeEach
     void setUp() {
@@ -79,9 +78,9 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenUserHasOneFolder_thenReturnDataViewModelWithOneFolder() throws Exception {
-        Folder folder = new Folder();
-        folder.setId((long) 1);
-        folder.setName("Test Folder");
+        Folder folder = new Folder()
+                .setName("Test Folder");
+        folder.setUid(existingUid);
         folder.setCreatedBy(validUser);
         expectedFolders.add(folder);
         prepareMocks();
@@ -97,10 +96,10 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenUserHasOneSet_thenReturnDataViewModelWithOneSet() throws Exception {
-        Folder set = new Folder();
-        set.setId(1L);
-        set.setSet(true);
-        set.setName("Test Set");
+        Folder set = new Folder()
+                .setSet(true)
+                .setName("Test Set");
+        set.setUid(existingUid);
         set.setCreatedBy(validUser);
         expectedFolders.add(set);
         prepareMocks();
@@ -118,12 +117,12 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenUserHasFolderInFolder() throws Exception {
-        Folder folder = new Folder();
-        folder.setId(1L);
-        folder.setName("FolderInRoot");
+        Folder folder = new Folder()
+                .setName("FolderInRoot");
+        folder.setUid(existingUid);
         folder.setCreatedBy(validUser);
         Folder subFolder = new Folder();
-        subFolder.setId(2L);
+        subFolder.setUid("different" + existingUid);
         subFolder.setName("SubFolder");
         subFolder.setRootFolder(folder);
         subFolder.setCreatedBy(validUser);
@@ -149,12 +148,12 @@ class GetUsersHomeDataUseCaseTest {
     @Test
     public void testGivenUserHasSetInFolder() throws Exception {
         Folder folder = new Folder();
-        folder.setId(1L);
+        folder.setUid(existingUid);
         folder.setName("FolderInRoot");
         folder.setCreatedBy(validUser);
         Folder set = new Folder();
         set.setSet(true);
-        set.setId(2L);
+        set.setUid("different" + existingUid);
         set.setName("SetInFolder");
         set.setRootFolder(folder);
         set.setCreatedBy(validUser);
@@ -181,12 +180,12 @@ class GetUsersHomeDataUseCaseTest {
     @Test
     public void testGivenUserHasCardInSet() throws Exception {
         Folder set = new Folder();
-        set.setId(1L);
+        set.setUid(existingUid);
         set.setSet(true);
         set.setName("Set");
         set.setCreatedBy(validUser);
         CueCard card = new CueCard();
-        card.setId(10L);
+        card.setUid("different" + existingUid);
         card.setTopic("some Topic");
         card.setQuestion("Frage");
         card.setSolution("Antwort");
@@ -198,7 +197,7 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         CueCardViewModel expectedCueCardViewModel = new CueCardViewModel();
-        expectedCueCardViewModel.cardID = existingUid;
+        expectedCueCardViewModel.cardID = "different" + existingUid;
         expectedCueCardViewModel.questionText = "Frage";
         expectedCueCardViewModel.solution = "Antwort";
         expectedCueCardViewModel.cardTopic = "some Topic";
@@ -217,24 +216,24 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenFullStructure() throws Exception {
-        Folder folder1 = getNewFolder(1);
-        Folder folder2 = getNewFolder(2);
-        Folder folder3 = getNewFolder(3);
-        Folder set4 = getNewSet(4);
-        Folder set5 = getNewSet(5);
-        Folder set6 = getNewSet(6);
-        Folder set7 = getNewSet(7);
-        Folder set8 = getNewSet(8);
-        CueCard card1 = getNewCueCard(1);
-        CueCard card2 = getNewCueCard(2);
-        CueCard card3 = getNewCueCard(3);
-        CueCard card4 = getNewCueCard(4);
-        CueCard card5 = getNewCueCard(5);
-        CueCard card6 = getNewCueCard(6);
-        CueCard card7 = getNewCueCard(7);
-        CueCard card8 = getNewCueCard(8);
-        CueCard card9 = getNewCueCard(9);
-        CueCard card10 = getNewCueCard(10);
+        Folder folder1 = getNewFolder(existingUid + "1");
+        Folder folder2 = getNewFolder(existingUid + "2");
+        Folder folder3 = getNewFolder(existingUid + "3");
+        Folder set4 = getNewSet(existingUid + "4");
+        Folder set5 = getNewSet(existingUid + "5");
+        Folder set6 = getNewSet(existingUid + "6");
+        Folder set7 = getNewSet(existingUid + "7");
+        Folder set8 = getNewSet(existingUid + "8");
+        CueCard card1 = getNewCueCard(existingUid + "1");
+        CueCard card2 = getNewCueCard(existingUid + "2");
+        CueCard card3 = getNewCueCard(existingUid + "3");
+        CueCard card4 = getNewCueCard(existingUid + "4");
+        CueCard card5 = getNewCueCard(existingUid + "5");
+        CueCard card6 = getNewCueCard(existingUid + "6");
+        CueCard card7 = getNewCueCard(existingUid + "7");
+        CueCard card8 = getNewCueCard(existingUid + "8");
+        CueCard card9 = getNewCueCard(existingUid + "9");
+        CueCard card10 = getNewCueCard(existingUid + "10");
 
         folder1.getSubFolders().add(folder3);
         folder1.getSubFolders().add(set6);
@@ -322,9 +321,9 @@ class GetUsersHomeDataUseCaseTest {
         return folderViewModel1;
     }
 
-    private CueCard getNewCueCard(long i) {
+    private CueCard getNewCueCard(String i) {
         CueCard card = new CueCard();
-        card.setId(i);
+        card.setUid(i);
         card.setCreatedBy(validUser);
         card.setTopic("Topic");
         card.setQuestion("Frage" + i);
@@ -333,18 +332,18 @@ class GetUsersHomeDataUseCaseTest {
         return card;
     }
 
-    private Folder getNewSet(long i) {
+    private Folder getNewSet(String i) {
         Folder set = new Folder();
         set.setSet(true);
-        set.setId(i);
+        set.setUid(i);
         set.setName("Set" + i);
         set.setCreatedBy(validUser);
         return set;
     }
 
-    private Folder getNewFolder(long i) {
+    private Folder getNewFolder(String i) {
         Folder folder = new Folder();
-        folder.setId(i);
+        folder.setUid(i);
         folder.setName("Folder" + i);
         folder.setCreatedBy(validUser);
         return folder;
@@ -352,9 +351,9 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenSetAndFolder_thenReturnFolderAndSet() throws Exception {
-        Folder set = getNewSet(1);
-        Folder folder = getNewFolder(2);
-        CueCard card = getNewCueCard(1);
+        Folder set = getNewSet(existingUid + 1);
+        Folder folder = getNewFolder(existingUid + 2);
+        CueCard card = getNewCueCard(existingUid + 1);
         set.getCueCards().add(card);
         expectedFolders.add(set);
         expectedFolders.add(folder);
