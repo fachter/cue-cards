@@ -98,7 +98,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     }
 
     private void addCueCardsToSet(FolderViewModel setViewModel, Folder set) {
-        for (CueCardViewModel cardViewModel : setViewModel.cueCards) {
+        for (CueCardViewModel cardViewModel : setViewModel.cards) {
             CueCard cueCard = getCueCardFromViewModel(set, cardViewModel);
             set.getCueCards().add(cueCard);
         }

@@ -8,5 +8,5 @@ public class FolderViewModel {
     public String name;
     public boolean isFolder = true;
     public ArrayList<FolderViewModel> subFolders = new ArrayList<>();
-    public ArrayList<CueCardViewModel> cueCards = new ArrayList<>();
+    public ArrayList<CueCardViewModel> cards = new ArrayList<>();
 }

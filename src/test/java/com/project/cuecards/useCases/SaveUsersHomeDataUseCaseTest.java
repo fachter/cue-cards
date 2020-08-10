@@ -156,7 +156,7 @@ public class SaveUsersHomeDataUseCaseTest {
         FolderViewModel folderVm = createFolderViewModel("testFolder");
         FolderViewModel setVm = createSetViewModel("testSet");
         CueCardViewModel cardVm = createCueCardViewModel("testQuestion", "testAnswer");
-        setVm.cueCards.add(cardVm);
+        setVm.cards.add(cardVm);
         viewModel.folders.add(folderVm);
         viewModel.folders.add(setVm);
         Folder folder = new Folder()
@@ -242,8 +242,8 @@ public class SaveUsersHomeDataUseCaseTest {
         card1.cardID += "1";
         CueCardViewModel card2 = createCueCardViewModel("Frage 2", "Antwort 2");
         card2.cardID += "2";
-        setViewModel.cueCards.add(card1);
-        setViewModel.cueCards.add(card2);
+        setViewModel.cards.add(card1);
+        setViewModel.cards.add(card2);
         viewModel.folders.add(setViewModel);
         Folder expectedSet = new Folder()
                 .setName("set")
@@ -328,8 +328,8 @@ public class SaveUsersHomeDataUseCaseTest {
         CueCardViewModel c2 = createCueCardViewModel("question2", "answer2");
         c2.cardLevel = 5;
         c2.cardID = "uid6";
-        s1.cueCards.add(c1);
-        s2.cueCards.add(c2);
+        s1.cards.add(c1);
+        s2.cards.add(c2);
         f2.subFolders.add(s2);
         f1.subFolders.add(s1);
         f1.subFolders.add(f2);
@@ -403,7 +403,7 @@ public class SaveUsersHomeDataUseCaseTest {
         answerVm2.text = "zweite Antwort";
         cardViewModel.answers.add(answerVm1);
         cardViewModel.answers.add(answerVm2);
-        setViewModel.cueCards.add(cardViewModel);
+        setViewModel.cards.add(cardViewModel);
         viewModel.folders.add(setViewModel);
         Folder expectedSet = createSet("set", "setUid");
         CueCard card = createCueCard(expectedSet);
@@ -470,7 +470,7 @@ public class SaveUsersHomeDataUseCaseTest {
         answerVm.text = "changed answer";
         answerVm.ID = "answerId";
         cardVm.answers.add(answerVm);
-        setVm.cueCards.add(cardVm);
+        setVm.cards.add(cardVm);
         folderVm.subFolders.add(setVm);
         viewModel.folders.add(folderVm);
 

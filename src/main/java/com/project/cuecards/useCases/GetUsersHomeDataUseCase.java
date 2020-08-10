@@ -1,6 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.GetUsersHomeData;
+import com.project.cuecards.entities.Answer;
 import com.project.cuecards.entities.CueCard;
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.User;
@@ -8,6 +9,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.FolderViewModel;
@@ -61,7 +63,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
         setViewModel.ID = f.getUid();
         setViewModel.name = f.getName();
         for (CueCard c : f.getCueCards())
-            setViewModel.cueCards.add(getCueCardViewModel(c));
+            setViewModel.cards.add(getCueCardViewModel(c));
 
         return setViewModel;
     }
@@ -72,7 +74,20 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
         cardViewModel.cardTopic = c.getTopic();
         cardViewModel.questionText = c.getQuestion();
         cardViewModel.solution = c.getSolution();
+        cardViewModel.cardType = c.getCardType();
+        cardViewModel.answers = getAnswerViewModels(c.getAnswers());
         return cardViewModel;
+    }
+
+    private ArrayList<AnswerViewModel> getAnswerViewModels(List<Answer> answers) {
+        ArrayList<AnswerViewModel> answerViewModels = new ArrayList<>();
+        for (Answer answer : answers) {
+            AnswerViewModel answerViewModel = new AnswerViewModel();
+            answerViewModel.ID = answer.getUid();
+            answerViewModel.text = answer.getText();
+            answerViewModels.add(answerViewModel);
+        }
+        return answerViewModels;
     }
 
     private FolderViewModel getFolderViewModel(Folder f) {

@@ -1,13 +1,16 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.GetUsersHomeData;
+import com.project.cuecards.entities.Answer;
 import com.project.cuecards.entities.CueCard;
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.User;
+import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.FolderViewModel;
@@ -205,8 +208,8 @@ class GetUsersHomeDataUseCaseTest {
         expectedSetViewModel.isFolder = false;
         expectedSetViewModel.ID = existingUid;
         expectedSetViewModel.name = "Set";
-        expectedSetViewModel.cueCards = new ArrayList<>();
-        expectedSetViewModel.cueCards.add(expectedCueCardViewModel);
+        expectedSetViewModel.cards = new ArrayList<>();
+        expectedSetViewModel.cards.add(expectedCueCardViewModel);
         expectedViewModel.folders.add(expectedSetViewModel);
 
         DataViewModel viewModel = useCase.get(validUsername);
@@ -277,16 +280,16 @@ class GetUsersHomeDataUseCaseTest {
         folderViewModel1.subFolders.add(setViewModel6);
         folderViewModel2.subFolders.add(setViewModel7);
         folderViewModel3.subFolders.add(setViewModel8);
-        setViewModel4.cueCards.add(cardViewModel1);
-        setViewModel4.cueCards.add(cardViewModel2);
-        setViewModel5.cueCards.add(cardViewModel3);
-        setViewModel5.cueCards.add(cardViewModel4);
-        setViewModel6.cueCards.add(cardViewModel5);
-        setViewModel6.cueCards.add(cardViewModel6);
-        setViewModel7.cueCards.add(cardViewModel7);
-        setViewModel7.cueCards.add(cardViewModel8);
-        setViewModel8.cueCards.add(cardViewModel9);
-        setViewModel8.cueCards.add(cardViewModel10);
+        setViewModel4.cards.add(cardViewModel1);
+        setViewModel4.cards.add(cardViewModel2);
+        setViewModel5.cards.add(cardViewModel3);
+        setViewModel5.cards.add(cardViewModel4);
+        setViewModel6.cards.add(cardViewModel5);
+        setViewModel6.cards.add(cardViewModel6);
+        setViewModel7.cards.add(cardViewModel7);
+        setViewModel7.cards.add(cardViewModel8);
+        setViewModel8.cards.add(cardViewModel9);
+        setViewModel8.cards.add(cardViewModel10);
         expectedViewModel.folders.add(folderViewModel1);
         expectedViewModel.folders.add(folderViewModel2);
         expectedViewModel.folders.add(setViewModel4);
@@ -303,6 +306,7 @@ class GetUsersHomeDataUseCaseTest {
         cardViewModel.cardTopic = "Topic";
         cardViewModel.questionText = "Frage" + i;
         cardViewModel.solution = "Antwort" + i;
+        cardViewModel.cardType = CardType.SC;
         return cardViewModel;
     }
 
@@ -328,6 +332,7 @@ class GetUsersHomeDataUseCaseTest {
         card.setTopic("Topic");
         card.setQuestion("Frage" + i);
         card.setSolution("Antwort" + i);
+        card.setCardType(CardType.SC);
         card.setLevel(1);
         return card;
     }
@@ -351,19 +356,54 @@ class GetUsersHomeDataUseCaseTest {
 
     @Test
     public void testGivenSetAndFolder_thenReturnFolderAndSet() throws Exception {
+        prepareMocks();
         Folder set = getNewSet(existingUid + 1);
         Folder folder = getNewFolder(existingUid + 2);
         CueCard card = getNewCueCard(existingUid + 1);
         set.getCueCards().add(card);
         expectedFolders.add(set);
         expectedFolders.add(folder);
-        prepareMocks();
         FolderViewModel folderViewModel = getNewFolderViewModel(existingUid + 2);
         FolderViewModel setViewModel = getNewSetViewModel(existingUid + 1);
         CueCardViewModel cardViewModel = getNewCardViewModel(existingUid + 1);
-        setViewModel.cueCards.add(cardViewModel);
+        setViewModel.cards.add(cardViewModel);
         expectedViewModel.folders.add(folderViewModel);
         expectedViewModel.folders.add(setViewModel);
+
+        DataViewModel viewModel = useCase.get(validUsername);
+
+        assertThat(viewModel).usingRecursiveComparison().isEqualTo(expectedViewModel);
+    }
+
+    @Test
+    public void givenSetWithCardAndAnswers() throws Exception {
+        Folder set = getNewSet(existingUid + 1);
+        CueCard card = getNewCueCard(existingUid + 2);
+        Answer answer1 = (Answer) new Answer()
+                .setText("Answer 1")
+                .setCueCard(card)
+                .setUid(existingUid + 3);
+        Answer answer2 = (Answer) new Answer()
+                .setText("Answer 2")
+                .setCueCard(card)
+                .setUid(existingUid + 4);
+        card.getAnswers().add(answer1);
+        card.getAnswers().add(answer2);
+        set.getCueCards().add(card);
+        expectedFolders.add(set);
+        prepareMocks();
+        FolderViewModel expectedSet = getNewSetViewModel(existingUid + 1);
+        CueCardViewModel expectedCard = getNewCardViewModel(existingUid + 2);
+        AnswerViewModel expectedAnswer1 = new AnswerViewModel();
+        expectedAnswer1.ID = existingUid + 3;
+        expectedAnswer1.text = "Answer 1";
+        AnswerViewModel expectedAnswer2 = new AnswerViewModel();
+        expectedAnswer2.ID = existingUid + 4;
+        expectedAnswer2.text = "Answer 2";
+        expectedCard.answers.add(expectedAnswer1);
+        expectedCard.answers.add(expectedAnswer2);
+        expectedSet.cards.add(expectedCard);
+        expectedViewModel.folders.add(expectedSet);
 
         DataViewModel viewModel = useCase.get(validUsername);
 
