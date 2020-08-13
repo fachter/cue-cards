@@ -9,6 +9,7 @@ import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
+import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.viewModels.AnswerViewModel;
@@ -41,7 +42,9 @@ public class SaveUsersHomeDataUseCaseTest {
     private final String existingUid = "SomeExistingUid";
     @Mock private FolderGateway folderGatewayMock;
     @Mock private UserGateway userGatewayMock;
+    @Mock private CueCardGateway cueCardGatewayMock;
     @Captor private ArgumentCaptor<ArrayList<Folder>> captor;
+    @Captor private ArgumentCaptor<ArrayList<CueCard>> cardCaptor;
     private SaveUsersHomeData useCase;
     private DataViewModel viewModel;
     private final String validUsername = "validUsername";
@@ -49,7 +52,7 @@ public class SaveUsersHomeDataUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new SaveUsersHomeDataUseCase(folderGatewayMock, userGatewayMock);
+        useCase = new SaveUsersHomeDataUseCase(folderGatewayMock, userGatewayMock, cueCardGatewayMock);
         viewModel = new DataViewModel();
     }
 
@@ -486,5 +489,49 @@ public class SaveUsersHomeDataUseCaseTest {
         assertEquals("changed Topic", card.getTopic());
         assertEquals(CardType.SC, card.getCardType());
         assertEquals("changed answer", answer.getText());
+    }
+
+    @Test
+    public void givenOneExistingFolderToDelete() throws Exception {
+        Folder folder = (Folder) new Folder()
+                .setName("Test Folder")
+                .setUid("Test");
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        folders.add(folder);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(folderGatewayMock,times(0)).addList(any());
+        verify(folderGatewayMock, times(1)).removeList(captor.capture());
+        assertEquals(folder, captor.getValue().get(0));
+    }
+
+    @Test
+    public void givenOneCardToDelete() throws Exception {
+        Folder set = (Folder) new Folder()
+                .setName("Test Set")
+                .setSet(true)
+                .setUid("TestSet");
+        CueCard cueCard = (CueCard) new CueCard()
+                .setQuestion("Test Frage")
+                .setSet(set)
+                .setUid("TestCard");
+        set.getCueCards().add(cueCard);
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        folders.add(set);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+        FolderViewModel setViewModel = createSetViewModel("Test Set");
+        setViewModel.id = "TestSet";
+        viewModel.folders.add(setViewModel);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(cueCardGatewayMock, times(1)).removeList(cardCaptor.capture());
+        ArrayList<CueCard> cards = cardCaptor.getValue();
+        assertEquals(cueCard, cards.get(0));
+
     }
 }

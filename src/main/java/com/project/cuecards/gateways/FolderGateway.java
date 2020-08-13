@@ -19,4 +19,6 @@ public interface FolderGateway {
     Folder getFolderById(int rootFolderId);
 
     ArrayList<Folder> getRootFoldersByUser(User user) throws InvalidArgumentException;
+
+    void removeList(ArrayList<Folder> folders) throws InvalidArgumentException;
 }

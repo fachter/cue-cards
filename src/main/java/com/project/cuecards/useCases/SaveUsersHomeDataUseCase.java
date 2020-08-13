@@ -8,6 +8,7 @@ import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
+import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.viewModels.AnswerViewModel;
@@ -25,15 +26,18 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private final FolderGateway folderGateway;
     private final UserGateway userGateway;
+    private final CueCardGateway cueCardGateway;
     private ArrayList<Folder> foldersToPersist;
     private ArrayList<Folder> existingFolders;
+    private ArrayList<CueCard> cardsToRemove;
     private User user;
 
     @Autowired
     public SaveUsersHomeDataUseCase(FolderGateway folderGateway,
-                                    UserGateway userGateway) {
+                                    UserGateway userGateway, CueCardGateway cueCardGateway) {
         this.folderGateway = folderGateway;
         this.userGateway = userGateway;
+        this.cueCardGateway = cueCardGateway;
     }
 
 
@@ -41,6 +45,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     public void save(DataViewModel viewModel, String username) throws InvalidDataException, UserDoesNotExistException {
         user = userGateway.getUserByUsername(username);
         foldersToPersist = new ArrayList<>();
+        cardsToRemove = new ArrayList<>();
         try {
             existingFolders = folderGateway.getRootFoldersByUser(user);
         } catch (InvalidArgumentException e) {
@@ -50,6 +55,8 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         try {
             if (foldersToPersist.size() > 0)
                 folderGateway.addList(foldersToPersist);
+            removeFolders();
+            removeCueCards();
         } catch (InvalidArgumentException e) {
             throw new InvalidDataException();
         }
@@ -98,10 +105,16 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     }
 
     private void addCueCardsToSet(FolderViewModel setViewModel, Folder set) {
+        ArrayList<CueCard> cards = new ArrayList<>();
         for (CueCardViewModel cardViewModel : setViewModel.cards) {
             CueCard cueCard = getCueCardFromViewModel(set, cardViewModel);
-            set.getCueCards().add(cueCard);
+            cards.add(cueCard);
         }
+        for (CueCard cueCard : set.getCueCards()) {
+            if (!cards.contains(cueCard))
+                cardsToRemove.add(cueCard);
+        }
+        set.setCueCards(cards);
     }
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
@@ -146,4 +159,18 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         return new Answer();
     }
 
+    private void removeFolders() throws InvalidArgumentException {
+        ArrayList<Folder> foldersToRemove = new ArrayList<>();
+        for (Folder existingFolder : existingFolders) {
+            if (!foldersToPersist.contains(existingFolder))
+                foldersToRemove.add(existingFolder);
+        }
+        if (foldersToRemove.size() > 0)
+            folderGateway.removeList(foldersToRemove);
+    }
+
+    private void removeCueCards() throws InvalidArgumentException {
+        if (cardsToRemove.size() > 0)
+            cueCardGateway.removeList(cardsToRemove);
+    }
 }

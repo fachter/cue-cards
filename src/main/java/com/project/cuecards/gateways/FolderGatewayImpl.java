@@ -57,4 +57,13 @@ public class FolderGatewayImpl implements FolderGateway {
             throw new InvalidArgumentException();
         }
     }
+
+    @Override
+    public void removeList(ArrayList<Folder> folders) throws InvalidArgumentException {
+        try {
+            folderRepository.deleteAll(folders);
+        } catch (Exception e) {
+            throw new InvalidArgumentException();
+        }
+    }
 }

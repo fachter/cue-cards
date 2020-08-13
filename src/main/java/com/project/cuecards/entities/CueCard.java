@@ -18,7 +18,7 @@ public class CueCard extends BaseEntity {
     @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private Folder set;
 
     public String getTopic() {
