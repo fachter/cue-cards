@@ -15,7 +15,7 @@ public class RaumController {
     @GetMapping("/get-available-rooms")
     public ResponseEntity<?> getAllRooms() {
         ArrayList<RoomViewModel> rooms = new ArrayList<>();
-        return new ResponseEntity<>(rooms,HttpStatus.OK);
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
     @PostMapping("/add-room")
@@ -26,7 +26,7 @@ public class RaumController {
         roomViewModel.data = new DataViewModel();
         FolderViewModel testFolder = new FolderViewModel();
         testFolder.name = "Test Folder";
-        testFolder.ID = "Test Folders Id";
+        testFolder.id = "Test Folders Id";
         roomViewModel.data.folders.add(testFolder);
         return new ResponseEntity<>(roomViewModel, HttpStatus.OK);
     }
@@ -40,6 +40,4 @@ public class RaumController {
     public ResponseEntity<?> editRoom() {
         return new ResponseEntity<>("Room changed", HttpStatus.OK);
     }
-
-
 }
