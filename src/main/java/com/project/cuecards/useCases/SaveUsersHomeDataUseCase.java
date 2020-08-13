@@ -77,12 +77,12 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private Folder getFolderByIdOrNewFolder(FolderViewModel folderViewModel, Folder rootFolder) {
         for (Folder folder : existingFolders) {
-            if (folder.getUid().equals(folderViewModel.ID))
+            if (folder.getUid().equals(folderViewModel.id))
                 return folder.setName(folderViewModel.name);
         }
         if (rootFolder != null)
             for (Folder subFolder : rootFolder.getSubFolders())
-                if (subFolder.getUid().equals(folderViewModel.ID))
+                if (subFolder.getUid().equals(folderViewModel.id))
                     return subFolder.setName(folderViewModel.name);
         return getFolderFromViewModel(folderViewModel, rootFolder);
     }
@@ -92,7 +92,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
                 .setSet(!folderViewModel.isFolder)
                 .setName(folderViewModel.name)
                 .setRootFolder(rootFolder);
-        folder.setUid(folderViewModel.ID);
+        folder.setUid(folderViewModel.id);
         folder.setCreatedBy(user);
         return folder;
     }
@@ -113,14 +113,14 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
                 .setCardType(cardViewModel.cardType)
                 .setSet(set);
         cueCard.setAnswers(getAnswersFromViewModel(cardViewModel.answers, cueCard))
-                .setUid(cardViewModel.cardID);
+                .setUid(cardViewModel.id);
         cueCard.setCreatedBy(user);
         return cueCard;
     }
 
     private CueCard getCard(Folder set, CueCardViewModel cardViewModel) {
         for (CueCard card : set.getCueCards()) {
-            if (card.getUid().equals(cardViewModel.cardID))
+            if (card.getUid().equals(cardViewModel.id))
                 return card;
         }
         return new CueCard();
@@ -132,7 +132,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
             Answer answer = getAnswer(cueCard, answerViewModel)
                     .setCueCard(cueCard)
                     .setText(answerViewModel.text);
-            answer.setUid(answerViewModel.ID);
+            answer.setUid(answerViewModel.id);
             answers.add(answer);
         }
         return answers;
@@ -140,7 +140,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
 
     private Answer getAnswer(CueCard cueCard, AnswerViewModel answerViewModel) {
         for (Answer answer : cueCard.getAnswers()) {
-            if (answer.getUid().equals(answerViewModel.ID))
+            if (answer.getUid().equals(answerViewModel.id))
                 return answer;
         }
         return new Answer();

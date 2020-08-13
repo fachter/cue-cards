@@ -56,21 +56,21 @@ public class SaveUsersHomeDataUseCaseTest {
     private FolderViewModel createSetViewModel(String setName) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.ID = newSetUid;
+        setViewModel.id = newSetUid;
         setViewModel.name = setName;
         return setViewModel;
     }
 
     private FolderViewModel createFolderViewModel(String folderName) {
         FolderViewModel folderViewModel = new FolderViewModel();
-        folderViewModel.ID = newFolderUid;
+        folderViewModel.id = newFolderUid;
         folderViewModel.name = folderName;
         return folderViewModel;
     }
 
     private CueCardViewModel createCueCardViewModel(String question, String answer) {
         CueCardViewModel card = new CueCardViewModel();
-        card.cardID = newCardUid;
+        card.id = newCardUid;
         card.cardTopic = "Topic";
         card.questionText = question;
         card.solution = answer;
@@ -190,7 +190,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderWithSubFolder() throws Exception {
         FolderViewModel folderViewModel = createFolderViewModel("Root");
         FolderViewModel subFolderViewModel = createFolderViewModel("Sub Folder");
-        subFolderViewModel.ID = "subFolderUid";
+        subFolderViewModel.id = "subFolderUid";
         folderViewModel.subFolders.add(subFolderViewModel);
         viewModel.folders.add(folderViewModel);
         Folder expectedRootFolder = new Folder()
@@ -239,9 +239,9 @@ public class SaveUsersHomeDataUseCaseTest {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel setViewModel = createSetViewModel("set");
         CueCardViewModel card1 = createCueCardViewModel("Frage 1", "Antwort 1");
-        card1.cardID += "1";
+        card1.id += "1";
         CueCardViewModel card2 = createCueCardViewModel("Frage 2", "Antwort 2");
-        card2.cardID += "2";
+        card2.id += "2";
         setViewModel.cards.add(card1);
         setViewModel.cards.add(card2);
         viewModel.folders.add(setViewModel);
@@ -278,7 +278,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderAlreadyExists_thenEdit() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("existingFolder");
-        folderViewModel.ID = existingUid;
+        folderViewModel.id = existingUid;
         viewModel.folders.add(folderViewModel);
         Folder folder = new Folder()
                 .setName("oldName");
@@ -300,7 +300,7 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderHasIdButDoesNotExist_thenAdd() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel folderViewModel = createFolderViewModel("test");
-        folderViewModel.ID = existingUid;
+        folderViewModel.id = existingUid;
         viewModel.folders.add(folderViewModel);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
 
@@ -315,19 +315,19 @@ public class SaveUsersHomeDataUseCaseTest {
     public void givenFolderWith2SubFoldersAnd2CardsEach() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         FolderViewModel f1 = createFolderViewModel("f1");
-        f1.ID = "uid1";
+        f1.id = "uid1";
         FolderViewModel f2 = createFolderViewModel("f2");
-        f2.ID = "uid2";
+        f2.id = "uid2";
         FolderViewModel s1 = createSetViewModel("s1");
-        s1.ID = "uid3";
+        s1.id = "uid3";
         FolderViewModel s2 = createSetViewModel("s2");
-        s2.ID = "uid4";
+        s2.id = "uid4";
         CueCardViewModel c1 = createCueCardViewModel("question1", "answer1");
         c1.cardLevel = 3;
-        c1.cardID = "uid5";
+        c1.id = "uid5";
         CueCardViewModel c2 = createCueCardViewModel("question2", "answer2");
         c2.cardLevel = 5;
-        c2.cardID = "uid6";
+        c2.id = "uid6";
         s1.cards.add(c1);
         s2.cards.add(c2);
         f2.subFolders.add(s2);
@@ -388,18 +388,18 @@ public class SaveUsersHomeDataUseCaseTest {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
         FolderViewModel setViewModel = createSetViewModel("set");
-        setViewModel.ID = "setUid";
+        setViewModel.id = "setUid";
         CueCardViewModel cardViewModel = new CueCardViewModel();
         cardViewModel.questionText = "Frage";
         cardViewModel.cardLevel = 2;
-        cardViewModel.cardID = "someCoolNewCardId";
+        cardViewModel.id = "someCoolNewCardId";
         cardViewModel.cardTopic = "cardTopic";
         cardViewModel.cardType = CardType.MC;
         AnswerViewModel answerVm1 = new AnswerViewModel();
-        answerVm1.ID = "antwort1Id";
+        answerVm1.id = "antwort1Id";
         answerVm1.text = "erste Antwort";
         AnswerViewModel answerVm2 = new AnswerViewModel();
-        answerVm2.ID = "antwort2Id";
+        answerVm2.id = "antwort2Id";
         answerVm2.text = "zweite Antwort";
         cardViewModel.answers.add(answerVm1);
         cardViewModel.answers.add(answerVm2);
@@ -458,17 +458,17 @@ public class SaveUsersHomeDataUseCaseTest {
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
 
         FolderViewModel folderVm = createFolderViewModel("changed Folder");
-        folderVm.ID = "folderId";
+        folderVm.id = "folderId";
         FolderViewModel setVm = createSetViewModel("changed Set");
-        setVm.ID = "setId";
+        setVm.id = "setId";
         CueCardViewModel cardVm = createCueCardViewModel("changed Frage", null);
         cardVm.cardTopic = "changed Topic";
         cardVm.cardType = CardType.SC;
         cardVm.cardLevel = 3;
-        cardVm.cardID = "someCoolNewCardId";
+        cardVm.id = "someCoolNewCardId";
         AnswerViewModel answerVm = new AnswerViewModel();
         answerVm.text = "changed answer";
-        answerVm.ID = "answerId";
+        answerVm.id = "answerId";
         cardVm.answers.add(answerVm);
         setVm.cards.add(cardVm);
         folderVm.subFolders.add(setVm);

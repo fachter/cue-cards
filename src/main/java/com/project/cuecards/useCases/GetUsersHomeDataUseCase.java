@@ -60,7 +60,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
     private FolderViewModel getSetViewModel(Folder f) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.ID = f.getUid();
+        setViewModel.id = f.getUid();
         setViewModel.name = f.getName();
         for (CueCard c : f.getCueCards())
             setViewModel.cards.add(getCueCardViewModel(c));
@@ -70,7 +70,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
 
     private CueCardViewModel getCueCardViewModel(CueCard c) {
         CueCardViewModel cardViewModel = new CueCardViewModel();
-        cardViewModel.cardID = c.getUid();
+        cardViewModel.id = c.getUid();
         cardViewModel.cardTopic = c.getTopic();
         cardViewModel.questionText = c.getQuestion();
         cardViewModel.solution = c.getSolution();
@@ -83,7 +83,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
         ArrayList<AnswerViewModel> answerViewModels = new ArrayList<>();
         for (Answer answer : answers) {
             AnswerViewModel answerViewModel = new AnswerViewModel();
-            answerViewModel.ID = answer.getUid();
+            answerViewModel.id = answer.getUid();
             answerViewModel.text = answer.getText();
             answerViewModels.add(answerViewModel);
         }
@@ -92,7 +92,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
 
     private FolderViewModel getFolderViewModel(Folder f) {
         FolderViewModel folderViewModel = new FolderViewModel();
-        folderViewModel.ID = f.getUid();
+        folderViewModel.id = f.getUid();
         folderViewModel.name = f.getName();
         List<Folder> folders = f.getSubFolders();
         addFolderAndSetViewModelsFromList(folders, folderViewModel.subFolders);

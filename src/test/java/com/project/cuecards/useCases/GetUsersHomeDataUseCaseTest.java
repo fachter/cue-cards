@@ -88,7 +88,7 @@ class GetUsersHomeDataUseCaseTest {
         expectedFolders.add(folder);
         prepareMocks();
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.ID = existingUid;
+        expectedFolderViewModel.id = existingUid;
         expectedFolderViewModel.name = "Test Folder";
         expectedViewModel.folders.add(expectedFolderViewModel);
 
@@ -109,7 +109,7 @@ class GetUsersHomeDataUseCaseTest {
 
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.ID = existingUid;
+        expectedSetViewModel.id = existingUid;
         expectedSetViewModel.name = "Test Set";
         expectedViewModel.folders.add(expectedSetViewModel);
 
@@ -134,11 +134,11 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.ID = existingUid;
+        expectedFolderViewModel.id = existingUid;
         expectedFolderViewModel.name = "FolderInRoot";
         expectedFolderViewModel.subFolders = new ArrayList<>();
         FolderViewModel expectedSubFolderViewModel = new FolderViewModel();
-        expectedSubFolderViewModel.ID = "different" + existingUid;
+        expectedSubFolderViewModel.id = "different" + existingUid;
         expectedSubFolderViewModel.name = "SubFolder";
         expectedFolderViewModel.subFolders.add(expectedSubFolderViewModel);
         expectedViewModel.folders.add(expectedFolderViewModel);
@@ -165,12 +165,12 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         FolderViewModel expectedFolderViewModel = new FolderViewModel();
-        expectedFolderViewModel.ID = existingUid;
+        expectedFolderViewModel.id = existingUid;
         expectedFolderViewModel.name = "FolderInRoot";
         expectedFolderViewModel.subFolders = new ArrayList<>();
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.ID = "different" + existingUid;
+        expectedSetViewModel.id = "different" + existingUid;
         expectedSetViewModel.name = "SetInFolder";
         expectedFolderViewModel.subFolders.add(expectedSetViewModel);
         expectedViewModel.folders.add(expectedFolderViewModel);
@@ -200,13 +200,13 @@ class GetUsersHomeDataUseCaseTest {
         prepareMocks();
 
         CueCardViewModel expectedCueCardViewModel = new CueCardViewModel();
-        expectedCueCardViewModel.cardID = "different" + existingUid;
+        expectedCueCardViewModel.id = "different" + existingUid;
         expectedCueCardViewModel.questionText = "Frage";
         expectedCueCardViewModel.solution = "Antwort";
         expectedCueCardViewModel.cardTopic = "some Topic";
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
-        expectedSetViewModel.ID = existingUid;
+        expectedSetViewModel.id = existingUid;
         expectedSetViewModel.name = "Set";
         expectedSetViewModel.cards = new ArrayList<>();
         expectedSetViewModel.cards.add(expectedCueCardViewModel);
@@ -302,7 +302,7 @@ class GetUsersHomeDataUseCaseTest {
 
     private CueCardViewModel getNewCardViewModel(String i) {
         CueCardViewModel cardViewModel = new CueCardViewModel();
-        cardViewModel.cardID = i;
+        cardViewModel.id = i;
         cardViewModel.cardTopic = "Topic";
         cardViewModel.questionText = "Frage" + i;
         cardViewModel.solution = "Antwort" + i;
@@ -313,14 +313,14 @@ class GetUsersHomeDataUseCaseTest {
     private FolderViewModel getNewSetViewModel(String i) {
         FolderViewModel setViewModel = new FolderViewModel();
         setViewModel.isFolder = false;
-        setViewModel.ID = i;
+        setViewModel.id = i;
         setViewModel.name = "Set" + i;
         return setViewModel;
     }
 
     private FolderViewModel getNewFolderViewModel(String i) {
         FolderViewModel folderViewModel1 = new FolderViewModel();
-        folderViewModel1.ID = i;
+        folderViewModel1.id = i;
         folderViewModel1.name = "Folder" + i;
         return folderViewModel1;
     }
@@ -395,10 +395,10 @@ class GetUsersHomeDataUseCaseTest {
         FolderViewModel expectedSet = getNewSetViewModel(existingUid + 1);
         CueCardViewModel expectedCard = getNewCardViewModel(existingUid + 2);
         AnswerViewModel expectedAnswer1 = new AnswerViewModel();
-        expectedAnswer1.ID = existingUid + 3;
+        expectedAnswer1.id = existingUid + 3;
         expectedAnswer1.text = "Answer 1";
         AnswerViewModel expectedAnswer2 = new AnswerViewModel();
-        expectedAnswer2.ID = existingUid + 4;
+        expectedAnswer2.id = existingUid + 4;
         expectedAnswer2.text = "Answer 2";
         expectedCard.answers.add(expectedAnswer1);
         expectedCard.answers.add(expectedAnswer2);
