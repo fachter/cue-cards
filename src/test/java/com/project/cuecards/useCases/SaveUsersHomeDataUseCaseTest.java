@@ -9,6 +9,7 @@ import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
+import com.project.cuecards.gateways.AnswerGateway;
 import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
@@ -43,8 +44,10 @@ public class SaveUsersHomeDataUseCaseTest {
     @Mock private FolderGateway folderGatewayMock;
     @Mock private UserGateway userGatewayMock;
     @Mock private CueCardGateway cueCardGatewayMock;
+    @Mock private AnswerGateway answerGatewayMock;
     @Captor private ArgumentCaptor<ArrayList<Folder>> captor;
     @Captor private ArgumentCaptor<ArrayList<CueCard>> cardCaptor;
+    @Captor private ArgumentCaptor<ArrayList<Answer>> answerCaptor;
     private SaveUsersHomeData useCase;
     private DataViewModel viewModel;
     private final String validUsername = "validUsername";
@@ -52,7 +55,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new SaveUsersHomeDataUseCase(folderGatewayMock, userGatewayMock, cueCardGatewayMock);
+        useCase = new SaveUsersHomeDataUseCase(folderGatewayMock, userGatewayMock,
+                cueCardGatewayMock, answerGatewayMock);
         viewModel = new DataViewModel();
     }
 
@@ -532,6 +536,39 @@ public class SaveUsersHomeDataUseCaseTest {
         verify(cueCardGatewayMock, times(1)).removeList(cardCaptor.capture());
         ArrayList<CueCard> cards = cardCaptor.getValue();
         assertEquals(cueCard, cards.get(0));
+    }
 
+    @Test
+    public void givenOneAnswerToDelete() throws Exception {
+        Folder set = (Folder) new Folder()
+                .setName("Test Set")
+                .setSet(true)
+                .setUid("TestSet");
+        CueCard cueCard = (CueCard) new CueCard()
+                .setQuestion("Test Frage")
+                .setSet(set)
+                .setUid("TestCard");
+        Answer answer = (Answer) new Answer()
+                .setText("Test Answer")
+                .setCueCard(cueCard)
+                .setUid("TestAnswer");
+        cueCard.getAnswers().add(answer);
+        set.getCueCards().add(cueCard);
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        folders.add(set);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+        FolderViewModel setViewModel = createSetViewModel("Test Set");
+        setViewModel.id = "TestSet";
+        CueCardViewModel cardViewModel = createCueCardViewModel("Test Frage", null);
+        cardViewModel.id = "TestCard";
+        setViewModel.cards.add(cardViewModel);
+        viewModel.folders.add(setViewModel);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(answerGatewayMock, times(1)).removeList(answerCaptor.capture());
+        ArrayList<Answer> answers = answerCaptor.getValue();
+        assertEquals(answer, answers.get(0));
     }
 }

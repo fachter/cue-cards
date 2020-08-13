@@ -1,6 +1,5 @@
 package com.project.cuecards.entities;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -9,7 +8,7 @@ public class Answer extends BaseEntity {
 
     private String text;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private CueCard cueCard;
 
     public String getText() {

@@ -8,6 +8,7 @@ import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
+import com.project.cuecards.gateways.AnswerGateway;
 import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
@@ -27,17 +28,22 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     private final FolderGateway folderGateway;
     private final UserGateway userGateway;
     private final CueCardGateway cueCardGateway;
+    private final AnswerGateway answerGateway;
     private ArrayList<Folder> foldersToPersist;
     private ArrayList<Folder> existingFolders;
     private ArrayList<CueCard> cardsToRemove;
     private User user;
+    private ArrayList<Answer> answersToRemove;
 
     @Autowired
     public SaveUsersHomeDataUseCase(FolderGateway folderGateway,
-                                    UserGateway userGateway, CueCardGateway cueCardGateway) {
+                                    UserGateway userGateway,
+                                    CueCardGateway cueCardGateway,
+                                    AnswerGateway answerGateway) {
         this.folderGateway = folderGateway;
         this.userGateway = userGateway;
         this.cueCardGateway = cueCardGateway;
+        this.answerGateway = answerGateway;
     }
 
 
@@ -46,6 +52,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         user = userGateway.getUserByUsername(username);
         foldersToPersist = new ArrayList<>();
         cardsToRemove = new ArrayList<>();
+        answersToRemove = new ArrayList<>();
         try {
             existingFolders = folderGateway.getRootFoldersByUser(user);
         } catch (InvalidArgumentException e) {
@@ -57,6 +64,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
                 folderGateway.addList(foldersToPersist);
             removeFolders();
             removeCueCards();
+            removeAnswers();
         } catch (InvalidArgumentException e) {
             throw new InvalidDataException();
         }
@@ -148,6 +156,10 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
             answer.setUid(answerViewModel.id);
             answers.add(answer);
         }
+        for (Answer answer : cueCard.getAnswers()) {
+            if (!answers.contains(answer))
+                answersToRemove.add(answer);
+        }
         return answers;
     }
 
@@ -172,5 +184,10 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     private void removeCueCards() throws InvalidArgumentException {
         if (cardsToRemove.size() > 0)
             cueCardGateway.removeList(cardsToRemove);
+    }
+
+    private void removeAnswers() throws InvalidArgumentException {
+        if (answersToRemove.size() > 0)
+            answerGateway.removeList(answersToRemove);
     }
 }
