@@ -307,6 +307,7 @@ class GetUsersHomeDataUseCaseTest {
         cardViewModel.questionText = "Frage" + i;
         cardViewModel.solution = "Antwort" + i;
         cardViewModel.cardType = CardType.SC;
+        cardViewModel.cardLevel = 1;
         return cardViewModel;
     }
 

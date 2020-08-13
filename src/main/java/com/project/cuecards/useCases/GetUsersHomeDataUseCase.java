@@ -75,6 +75,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
         cardViewModel.questionText = c.getQuestion();
         cardViewModel.solution = c.getSolution();
         cardViewModel.cardType = c.getCardType();
+        cardViewModel.cardLevel = c.getLevel();
         cardViewModel.answers = getAnswerViewModels(c.getAnswers());
         return cardViewModel;
     }
