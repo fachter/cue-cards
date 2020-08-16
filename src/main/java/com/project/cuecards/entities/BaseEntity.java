@@ -30,6 +30,15 @@ public abstract class BaseEntity {
     @ManyToOne
     private User lastModifiedBy;
 
+    public Long getId() {
+        return id;
+    }
+
+    public BaseEntity setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getUid() {
         return uid;
     }
@@ -39,43 +48,39 @@ public abstract class BaseEntity {
         return this;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+    public BaseEntity setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+        return this;
     }
 
     public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public BaseEntity setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+        return this;
     }
 
     public LocalDateTime getLastModifiedDateTime() {
         return lastModifiedDateTime;
     }
 
-    public void setLastModifiedDateTime(LocalDateTime lastModifiedDateTime) {
+    public BaseEntity setLastModifiedDateTime(LocalDateTime lastModifiedDateTime) {
         this.lastModifiedDateTime = lastModifiedDateTime;
+        return this;
     }
 
     public User getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(User lastModifiedBy) {
+    public BaseEntity setLastModifiedBy(User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
+        return this;
     }
 }

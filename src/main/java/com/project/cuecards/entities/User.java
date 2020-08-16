@@ -85,71 +85,70 @@ public class User extends BaseEntity implements UserDetails {
         return enabled;
     }
 
-    public void assignRole(Role role) {
-        this.roles.add(role);
-    }
-
-    public void removeRole(Role role) {
-        this.roles.remove(role);
-    }
-
-    public void removeAllRoles() {
-        this.roles = new HashSet<>();
-    }
-
+    @Override
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public User setUsername(String username) {
         this.username = username;
+        return this;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
+    public User setFullName(String fullName) {
         this.fullName = fullName;
+        return this;
     }
 
     public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public User setRoles(Set<Role> roles) {
         this.roles = roles;
+        return this;
     }
 
-    public void setAccountNonExpired(boolean accountNonExpired) {
+    public User setAccountNonExpired(boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;
+        return this;
     }
 
-    public void setAccountNonLocked(boolean accountNonLocked) {
+    public User setAccountNonLocked(boolean accountNonLocked) {
         this.accountNonLocked = accountNonLocked;
+        return this;
     }
 
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+    public User setCredentialsNonExpired(boolean credentialsNonExpired) {
         this.credentialsNonExpired = credentialsNonExpired;
+        return this;
     }
 
-    public void setEnabled(boolean enabled) {
+    public User setEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
     }
 }
