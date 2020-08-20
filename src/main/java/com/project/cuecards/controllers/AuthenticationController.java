@@ -9,6 +9,7 @@ import com.project.cuecards.viewModels.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -28,9 +29,8 @@ public class AuthenticationController {
     public ResponseEntity<?> createNewUser(@RequestBody RegisterRequest registerRequest) {
         try {
             createNewUser.create(registerRequest);
-            return new ResponseEntity<>(authenticate.authenticate(
-                    new AuthenticationRequest(registerRequest.getUsername(), registerRequest.getPassword())),
-                    HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(authenticate.authenticate(new AuthenticationRequest(
+                    registerRequest.getUsername(), registerRequest.getPassword())), HttpStatus.ACCEPTED);
         } catch (UserAlreadyExistsException e) {
             return new ResponseEntity<>(registerRequest, HttpStatus.BAD_REQUEST);
         } catch (InvalidDataException e) {

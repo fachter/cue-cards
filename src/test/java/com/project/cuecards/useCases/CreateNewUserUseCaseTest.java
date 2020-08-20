@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
 
@@ -27,10 +28,11 @@ class CreateNewUserUseCaseTest {
 
     private CreateNewUser createNewUser;
     @Mock private UserGateway userGatewayMock;
+    @Mock private PasswordEncoder passwordEncoderMock;
 
     @BeforeEach
     void setUp() {
-        createNewUser = new CreateNewUserUseCase(userGatewayMock);
+        createNewUser = new CreateNewUserUseCase(userGatewayMock, passwordEncoderMock);
     }
 
     @Test
