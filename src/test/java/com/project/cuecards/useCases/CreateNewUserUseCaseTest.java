@@ -29,6 +29,7 @@ class CreateNewUserUseCaseTest {
     private CreateNewUser createNewUser;
     @Mock private UserGateway userGatewayMock;
     @Mock private PasswordEncoder passwordEncoderMock;
+    private final String encodedPassword = "%password!123";
 
     @BeforeEach
     void setUp() {
@@ -74,6 +75,7 @@ class CreateNewUserUseCaseTest {
 
     @Test
     public void givenAllFieldsAreSet() throws Exception {
+        when(passwordEncoderMock.encode("test")).thenReturn(encodedPassword);
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         RegisterRequest registerRequest = new RegisterRequest()
                 .setUsername("newUser")
@@ -82,7 +84,7 @@ class CreateNewUserUseCaseTest {
                 .setFullName("New User");
         User expectedUser = new User();
         expectedUser.setUsername("newUser");
-        expectedUser.setPassword("test");
+        expectedUser.setPassword(encodedPassword);
         expectedUser.setEmail("email");
         expectedUser.setFullName("New User");
 
@@ -94,6 +96,7 @@ class CreateNewUserUseCaseTest {
 
     @Test
     public void givenNoFullName_thenUseUsername() throws Exception {
+        when(passwordEncoderMock.encode("test")).thenReturn(encodedPassword);
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         RegisterRequest registerRequest = new RegisterRequest()
                 .setUsername("newUser")
@@ -101,7 +104,7 @@ class CreateNewUserUseCaseTest {
                 .setEmail("email");
         User expectedUser = new User();
         expectedUser.setUsername("newUser");
-        expectedUser.setPassword("test");
+        expectedUser.setPassword(encodedPassword);
         expectedUser.setEmail("email");
         expectedUser.setFullName("newUser");
 
