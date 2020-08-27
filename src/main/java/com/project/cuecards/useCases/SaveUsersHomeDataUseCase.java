@@ -1,10 +1,8 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.SaveUsersHomeData;
-import com.project.cuecards.entities.Answer;
-import com.project.cuecards.entities.CueCard;
-import com.project.cuecards.entities.Folder;
-import com.project.cuecards.entities.User;
+import com.project.cuecards.entities.*;
+import com.project.cuecards.exceptions.CardLevelDoesNotExistException;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
@@ -59,15 +57,7 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
             existingFolders = new ArrayList<>();
         }
         addFoldersToList(viewModel.folders);
-        try {
-            if (foldersToPersist.size() > 0)
-                folderGateway.addList(foldersToPersist);
-            removeFolders();
-            removeCueCards();
-            removeAnswers();
-        } catch (InvalidArgumentException e) {
-            throw new InvalidDataException();
-        }
+        persistToDb();
     }
 
     private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels) {
@@ -130,13 +120,34 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
                 .setQuestion(cardViewModel.questionText)
                 .setSolution(cardViewModel.solution)
                 .setTopic(cardViewModel.cardTopic)
-                .setLevel(cardViewModel.cardLevel)
                 .setCardType(cardViewModel.cardType)
                 .setSet(set);
-        cueCard.setAnswers(getAnswersFromViewModel(cardViewModel.answers, cueCard))
+        cueCard.setCardLevels(getCardLevelsForCueCard(cardViewModel, cueCard))
+                .setAnswers(getAnswersFromViewModel(cardViewModel.answers, cueCard))
                 .setUid(cardViewModel.id);
         cueCard.setCreatedBy(user);
         return cueCard;
+    }
+
+    private List<CardLevel> getCardLevelsForCueCard(CueCardViewModel cardViewModel, CueCard cueCard) {
+        List<CardLevel> cardLevels = cueCard.getCardLevels();
+        CardLevel cardLevel;
+        try {
+            cardLevel = getCardLevel(cardLevels);
+        } catch (CardLevelDoesNotExistException e) {
+            cardLevel = new CardLevel();
+            cardLevels.add(cardLevel);
+        }
+        cardLevel.setCueCard(cueCard).setUser(user).setUsersCardLevel(cardViewModel.cardLevel);
+        return cardLevels;
+    }
+
+    private CardLevel getCardLevel(List<CardLevel> cardLevels) throws CardLevelDoesNotExistException {
+        for (CardLevel cardLevel : cardLevels) {
+            if (cardLevel.getUser().equals(user))
+                return cardLevel;
+        }
+        throw new CardLevelDoesNotExistException();
     }
 
     private CueCard getCard(Folder set, CueCardViewModel cardViewModel) {
@@ -169,6 +180,18 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
                 return answer;
         }
         return new Answer();
+    }
+
+    private void persistToDb() throws InvalidDataException {
+        try {
+            if (foldersToPersist.size() > 0)
+                folderGateway.addList(foldersToPersist);
+            removeFolders();
+            removeCueCards();
+            removeAnswers();
+        } catch (InvalidArgumentException e) {
+            throw new InvalidDataException();
+        }
     }
 
     private void removeFolders() throws InvalidArgumentException {

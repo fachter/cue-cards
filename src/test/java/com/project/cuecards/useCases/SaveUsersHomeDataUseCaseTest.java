@@ -1,10 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.SaveUsersHomeData;
-import com.project.cuecards.entities.Answer;
-import com.project.cuecards.entities.CueCard;
-import com.project.cuecards.entities.Folder;
-import com.project.cuecards.entities.User;
+import com.project.cuecards.entities.*;
 import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
@@ -183,6 +180,7 @@ public class SaveUsersHomeDataUseCaseTest {
                 .setSolution("testAnswer");
         card.setCreatedBy(validUser);
         card.setUid(newCardUid);
+        card.getCardLevels().add(new CardLevel().setUser(validUser).setCueCard(card));
         set.getCueCards().add(card);
 
         useCase.save(viewModel, validUsername);
@@ -263,12 +261,14 @@ public class SaveUsersHomeDataUseCaseTest {
                 .setSolution("Antwort 1")
                 .setSet(expectedSet);
         expectedCard1.setCreatedBy(validUser);
+        expectedCard1.getCardLevels().add(new CardLevel().setCueCard(expectedCard1).setUser(validUser));
         expectedCard1.setUid(newCardUid + 1);
         CueCard expectedCard2 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("Frage 2")
                 .setSolution("Antwort 2")
                 .setSet(expectedSet);
+        expectedCard2.getCardLevels().add(new CardLevel().setCueCard(expectedCard2).setUser(validUser));
         expectedCard2.setCreatedBy(validUser);
         expectedCard2.setUid(newCardUid+ 2);
         expectedSet.getCueCards().add(expectedCard1);
@@ -348,15 +348,15 @@ public class SaveUsersHomeDataUseCaseTest {
         CueCard expectedC1 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("question1")
-                .setSolution("answer1")
-                .setLevel(3);
+                .setSolution("answer1");
+        expectedC1.getCardLevels().add(new CardLevel().setCueCard(expectedC1).setUsersCardLevel(3).setUser(validUser));
         expectedC1.setUid("uid5");
         expectedC1.setCreatedBy(validUser);
         CueCard expectedC2 = new CueCard()
                 .setTopic("Topic")
                 .setQuestion("question2")
-                .setSolution("answer2")
-                .setLevel(5);
+                .setSolution("answer2");
+        expectedC2.getCardLevels().add(new CardLevel().setUsersCardLevel(5).setUser(validUser).setCueCard(expectedC2));
         expectedC2.setUid("uid6");
         expectedC2.setCreatedBy(validUser);
 
@@ -413,7 +413,7 @@ public class SaveUsersHomeDataUseCaseTest {
         setViewModel.cards.add(cardViewModel);
         viewModel.folders.add(setViewModel);
         Folder expectedSet = createSet("set", "setUid");
-        CueCard card = createCueCard(expectedSet);
+        CueCard card = createCueCard(expectedSet, 2);
         Answer answer1 = new Answer()
                 .setText("erste Antwort")
                 .setCueCard(card);
@@ -434,13 +434,13 @@ public class SaveUsersHomeDataUseCaseTest {
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedSet);
     }
 
-    private CueCard createCueCard(Folder set) {
+    private CueCard createCueCard(Folder set, int cardLevel) {
         CueCard card = new CueCard()
                 .setSet(set)
                 .setTopic("cardTopic")
                 .setCardType(CardType.MC)
-                .setQuestion("Frage")
-                .setLevel(2);
+                .setQuestion("Frage");
+        card.getCardLevels().add(new CardLevel().setUsersCardLevel(cardLevel).setUser(validUser).setCueCard(card));
         card.setUid("someCoolNewCardId");
         card.setCreatedBy(validUser);
         return card;
@@ -451,7 +451,7 @@ public class SaveUsersHomeDataUseCaseTest {
         Folder folder = createFolder("folder", "folderId");
         Folder set = createSet("set", "setId");
         set.setRootFolder(folder);
-        CueCard card = createCueCard(set);
+        CueCard card = createCueCard(set, 3);
         Answer answer = (Answer) new Answer()
                 .setText("answer")
                 .setCueCard(card)
@@ -570,5 +570,74 @@ public class SaveUsersHomeDataUseCaseTest {
         verify(answerGatewayMock, times(1)).removeList(answerCaptor.capture());
         ArrayList<Answer> answers = answerCaptor.getValue();
         assertEquals(answer, answers.get(0));
+    }
+
+    @Test
+    public void givenCardHasMultipleLevels_thenOverwriteValue() throws Exception {
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        Folder set = (Folder) new Folder()
+                .setName("Test Set")
+                .setSet(true)
+                .setUid("TestSet");
+        CueCard cueCard = (CueCard) new CueCard()
+                .setQuestion("Test Frage")
+                .setSet(set)
+                .setUid("TestCard");
+        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("First Test")).setUsersCardLevel(3).setId(432L);
+        CardLevel cardLevel2 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(validUser).setUsersCardLevel(3).setId(123L);
+        CardLevel cardLevel3 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("SecondTest")).setUsersCardLevel(3).setId(532L);
+        cueCard.getCardLevels().add(cardLevel1);
+        cueCard.getCardLevels().add(cardLevel2);
+        cueCard.getCardLevels().add(cardLevel3);
+        set.getCueCards().add(cueCard);
+        folders.add(set);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+
+        FolderViewModel setViewModel = createSetViewModel("Test Set");
+        setViewModel.id = "TestSet";
+        CueCardViewModel cardViewModel = createCueCardViewModel("Test Frage", null);
+        cardViewModel.id = "TestCard";
+        cardViewModel.cardLevel = 5;
+        setViewModel.cards.add(cardViewModel);
+        viewModel.folders.add(setViewModel);
+
+        useCase.save(viewModel, validUsername);
+
+        assertEquals(3, cueCard.getCardLevels().size());
+        assertEquals(5, cardLevel2.getUsersCardLevel());
+    }
+
+    @Test
+    public void givenCardHasMultipleLevelsFromOtherUsers_thenCreateNewLevel() throws Exception {
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        ArrayList<Folder> folders = new ArrayList<>();
+        Folder set = (Folder) new Folder()
+                .setName("Test Set")
+                .setSet(true)
+                .setUid("TestSet");
+        CueCard cueCard = (CueCard) new CueCard()
+                .setQuestion("Test Frage")
+                .setSet(set)
+                .setUid("TestCard");
+        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("First Test")).setUsersCardLevel(3).setId(432L);
+        CardLevel cardLevel2 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("SecondTest")).setUsersCardLevel(3).setId(532L);
+        cueCard.getCardLevels().add(cardLevel1);
+        cueCard.getCardLevels().add(cardLevel2);
+        set.getCueCards().add(cueCard);
+        folders.add(set);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+
+        FolderViewModel setViewModel = createSetViewModel("Test Set");
+        setViewModel.id = "TestSet";
+        CueCardViewModel cardViewModel = createCueCardViewModel("Test Frage", null);
+        cardViewModel.id = "TestCard";
+        cardViewModel.cardLevel = 5;
+        setViewModel.cards.add(cardViewModel);
+        viewModel.folders.add(setViewModel);
+
+        useCase.save(viewModel, validUsername);
+
+        assertEquals(3, cueCard.getCardLevels().size());
     }
 }

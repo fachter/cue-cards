@@ -12,7 +12,6 @@ public class CueCard extends BaseEntity {
     private String topic;
     private String question;
     private String solution;
-    private int level;
     private CardType cardType = CardType.FT;
 
     @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL)
@@ -20,6 +19,9 @@ public class CueCard extends BaseEntity {
 
     @ManyToOne()
     private Folder set;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<CardLevel> cardLevels = new ArrayList<>();
 
     @ManyToOne
     private Room room;
@@ -51,15 +53,6 @@ public class CueCard extends BaseEntity {
         return this;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public CueCard setLevel(int level) {
-        this.level = level;
-        return this;
-    }
-
     public Folder getSet() {
         return set;
     }
@@ -84,6 +77,24 @@ public class CueCard extends BaseEntity {
 
     public CueCard setCardType(CardType cardType) {
         this.cardType = cardType;
+        return this;
+    }
+
+    public List<CardLevel> getCardLevels() {
+        return cardLevels;
+    }
+
+    public CueCard setCardLevels(List<CardLevel> cardLevels) {
+        this.cardLevels = cardLevels;
+        return this;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public CueCard setRoom(Room room) {
+        this.room = room;
         return this;
     }
 }

@@ -1,10 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.GetUsersHomeData;
-import com.project.cuecards.entities.Answer;
-import com.project.cuecards.entities.CueCard;
-import com.project.cuecards.entities.Folder;
-import com.project.cuecards.entities.User;
+import com.project.cuecards.entities.*;
 import com.project.cuecards.enums.CardType;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
@@ -22,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -192,7 +190,7 @@ class GetUsersHomeDataUseCaseTest {
         card.setTopic("some Topic");
         card.setQuestion("Frage");
         card.setSolution("Antwort");
-        card.setLevel(0);
+        card.getCardLevels().add(new CardLevel().setCueCard(card).setUser(validUser).setUsersCardLevel(1));
         card.setSet(set);
         card.setCreatedBy(validUser);
         set.getCueCards().add(card);
@@ -204,6 +202,7 @@ class GetUsersHomeDataUseCaseTest {
         expectedCueCardViewModel.questionText = "Frage";
         expectedCueCardViewModel.solution = "Antwort";
         expectedCueCardViewModel.cardTopic = "some Topic";
+        expectedCueCardViewModel.cardLevel = 1;
         FolderViewModel expectedSetViewModel = new FolderViewModel();
         expectedSetViewModel.isFolder = false;
         expectedSetViewModel.id = existingUid;
@@ -334,7 +333,7 @@ class GetUsersHomeDataUseCaseTest {
         card.setQuestion("Frage" + i);
         card.setSolution("Antwort" + i);
         card.setCardType(CardType.SC);
-        card.setLevel(1);
+        card.getCardLevels().add(new CardLevel().setUsersCardLevel(1).setUser(validUser).setCueCard(card));
         return card;
     }
 
@@ -403,6 +402,51 @@ class GetUsersHomeDataUseCaseTest {
         expectedAnswer2.text = "Answer 2";
         expectedCard.answers.add(expectedAnswer1);
         expectedCard.answers.add(expectedAnswer2);
+        expectedSet.cards.add(expectedCard);
+        expectedViewModel.folders.add(expectedSet);
+
+        DataViewModel viewModel = useCase.get(validUsername);
+
+        assertThat(viewModel).usingRecursiveComparison().isEqualTo(expectedViewModel);
+    }
+
+    @Test
+    public void givenCardWithMultipleCardLevels_thenReturnUserMatchingLevel() throws Exception {
+        Folder set = getNewSet(existingUid + 1);
+        CueCard card = getNewCueCard(existingUid + 2);
+        List<CardLevel> cardLevels = new ArrayList<>();
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(validUser).setCueCard(card).setUsersCardLevel(3).setId(123L));
+        card.setCardLevels(cardLevels);
+        set.getCueCards().add(card);
+        expectedFolders.add(set);
+        prepareMocks();
+        FolderViewModel expectedSet = getNewSetViewModel(existingUid + 1);
+        CueCardViewModel expectedCard = getNewCardViewModel(existingUid + 2);
+        expectedCard.cardLevel = 3;
+        expectedSet.cards.add(expectedCard);
+        expectedViewModel.folders.add(expectedSet);
+
+        DataViewModel viewModel = useCase.get(validUsername);
+
+        assertThat(viewModel).usingRecursiveComparison().isEqualTo(expectedViewModel);
+    }
+
+    @Test
+    public void givenCardWithMultipleNonUserMatchingLevels_thenReturnZero() throws Exception {
+        Folder set = getNewSet(existingUid + 1);
+        CueCard card = getNewCueCard(existingUid + 2);
+        List<CardLevel> cardLevels = new ArrayList<>();
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
+        card.setCardLevels(cardLevels);
+        set.getCueCards().add(card);
+        expectedFolders.add(set);
+        prepareMocks();
+        FolderViewModel expectedSet = getNewSetViewModel(existingUid + 1);
+        CueCardViewModel expectedCard = getNewCardViewModel(existingUid + 2);
+        expectedCard.cardLevel = 0;
         expectedSet.cards.add(expectedCard);
         expectedViewModel.folders.add(expectedSet);
 

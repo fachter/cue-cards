@@ -1,10 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.GetUsersHomeData;
-import com.project.cuecards.entities.Answer;
-import com.project.cuecards.entities.CueCard;
-import com.project.cuecards.entities.Folder;
-import com.project.cuecards.entities.User;
+import com.project.cuecards.entities.*;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
@@ -24,6 +21,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
 
     private final UserGateway userGateway;
     private final FolderGateway folderGateway;
+    private User user;
 
     @Autowired
     public GetUsersHomeDataUseCase(UserGateway userGateway, FolderGateway folderGateway) {
@@ -33,7 +31,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
 
     @Override
     public DataViewModel get(String username) throws UserDoesNotExistException {
-        User user = userGateway.getUserByUsername(username);
+        user = userGateway.getUserByUsername(username);
         ArrayList<Folder> folders;
         try {
             folders = folderGateway.getRootFoldersByUser(user);
@@ -75,9 +73,17 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
         cardViewModel.questionText = c.getQuestion();
         cardViewModel.solution = c.getSolution();
         cardViewModel.cardType = c.getCardType();
-        cardViewModel.cardLevel = c.getLevel();
+        cardViewModel.cardLevel = getUsersCardLevel(c);
         cardViewModel.answers = getAnswerViewModels(c.getAnswers());
         return cardViewModel;
+    }
+
+    private int getUsersCardLevel(CueCard c) {
+        for (CardLevel cardLevel : c.getCardLevels()) {
+            if (cardLevel.getUser().equals(user))
+                return cardLevel.getUsersCardLevel();
+        }
+        return 0;
     }
 
     private ArrayList<AnswerViewModel> getAnswerViewModels(List<Answer> answers) {
