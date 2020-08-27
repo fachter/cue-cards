@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "userAccount")
+@Table(name = "user_account")
 public class User extends BaseEntity implements UserDetails {
 
     @NotBlank
@@ -45,6 +45,9 @@ public class User extends BaseEntity implements UserDetails {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
     private boolean enabled = true;
+
+    @ManyToMany(mappedBy = "allowedUsers")
+    private Set<Room> availableRooms = new HashSet<>();
 
     public User() {
     }
@@ -149,6 +152,15 @@ public class User extends BaseEntity implements UserDetails {
 
     public User setEnabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+
+    public Set<Room> getAvailableRooms() {
+        return availableRooms;
+    }
+
+    public User setAvailableRooms(Set<Room> availableRooms) {
+        this.availableRooms = availableRooms;
         return this;
     }
 }

@@ -1,5 +1,7 @@
 package com.project.cuecards.controllers;
 
+import com.project.cuecards.entities.User;
+import com.project.cuecards.services.LoggedInUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,5 +13,11 @@ public class TestApiController {
     @GetMapping("/")
     public ResponseEntity<String> testFunction() {
         return new ResponseEntity<>("Test", HttpStatus.OK);
+    }
+
+    @GetMapping("/getAvailableRooms")
+    public ResponseEntity<?> getRoomsForUser() {
+        User user = LoggedInUserService.getLoggedInUser();
+        return new ResponseEntity<>(user.getAvailableRooms(), HttpStatus.ACCEPTED);
     }
 }

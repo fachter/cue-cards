@@ -4,6 +4,7 @@ import com.project.cuecards.boundaries.AddOrEditRoom;
 import com.project.cuecards.boundaries.AllRooms;
 import com.project.cuecards.boundaries.DeleteRooms;
 import com.project.cuecards.boundaries.JoinRoom;
+import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.services.LoggedInUserService;
 import com.project.cuecards.viewModels.JoinRoomViewModel;
@@ -54,9 +55,10 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/join-room")
-    public ResponseEntity<?> joinRoom(@RequestBody JoinRoomViewModel joinRoomViewModel) {
-        joinRoom.join(joinRoomViewModel, LoggedInUserService.getLoggedInUser());
+    // Object mit Passwort zurück schicken
+    @GetMapping("/join-room/{roomId}")
+    public ResponseEntity<?> joinRoom(@PathVariable Long roomId) {
+        joinRoom.join(roomId, LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

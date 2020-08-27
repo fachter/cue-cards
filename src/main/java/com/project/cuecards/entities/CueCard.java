@@ -21,6 +21,9 @@ public class CueCard extends BaseEntity {
     @ManyToOne()
     private Folder set;
 
+    @ManyToOne
+    private Room room;
+
     public String getTopic() {
         return topic;
     }

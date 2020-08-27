@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,13 +23,14 @@ import static org.mockito.Mockito.*;
 class AddOrEditRoomUseCaseTest {
 
     @Mock private RoomGateway roomGatewayMock;
+    @Mock private PasswordEncoder passwordEncoderMock;
     private AddOrEditRoom roomUseCase;
     private final User loggedInUser = new User().setFullName("Test").setUsername("test").setPassword("test");
     @Captor private ArgumentCaptor<Room> captor;
 
     @BeforeEach
     void setUp() {
-        roomUseCase = new AddOrEditRoomUseCase(roomGatewayMock);
+        roomUseCase = new AddOrEditRoomUseCase(roomGatewayMock, passwordEncoderMock);
     }
 
     @Test
@@ -43,9 +45,13 @@ class AddOrEditRoomUseCaseTest {
 
     @Test
     public void givenRoomWithoutId_thenSaveNewRoom() throws Exception {
+        when(passwordEncoderMock.encode("password")).thenReturn("123password%!");
         RoomViewModel viewModel = new RoomViewModel();
         viewModel.name = "Room";
-        Room expectedRoom = new Room().setName("Room");
+        viewModel.password = "password";
+        Room expectedRoom = new Room().setName("Room").setPassword("123password%!");
+        expectedRoom.getAllowedUsers().add(loggedInUser);
+        loggedInUser.getAvailableRooms().add(expectedRoom);
 
         roomUseCase.add(viewModel, loggedInUser);
 
@@ -55,10 +61,12 @@ class AddOrEditRoomUseCaseTest {
 
     @Test
     public void givenRoomWithId_thenChangeRoom() throws Exception {
+        when(passwordEncoderMock.encode("newPassword")).thenReturn("123password%!");
         RoomViewModel viewModel = new RoomViewModel();
         viewModel.id = 123L;
         viewModel.name = "new Name";
-        Room existingRoom = (Room) new Room().setName("old Name").setId(123L);
+        viewModel.password = "newPassword";
+        Room existingRoom = (Room) new Room().setName("old Name").setPassword("oldPassword").setId(123L);
         when(roomGatewayMock.getById(123L)).thenReturn(existingRoom);
 
         roomUseCase.add(viewModel, loggedInUser);
@@ -66,5 +74,6 @@ class AddOrEditRoomUseCaseTest {
         verify(roomGatewayMock, times(1)).save(captor.capture());
         assertEquals(existingRoom, captor.getValue());
         assertEquals("new Name", existingRoom.getName());
+        assertEquals("123password%!", existingRoom.getPassword());
     }
 }

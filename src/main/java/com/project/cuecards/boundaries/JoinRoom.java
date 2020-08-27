@@ -5,5 +5,5 @@ import com.project.cuecards.viewModels.JoinRoomViewModel;
 
 public interface JoinRoom {
 
-    void join(JoinRoomViewModel joinRoomViewModel, User loggedInUser);
+    void join(Long roomId, User loggedInUser);
 }
