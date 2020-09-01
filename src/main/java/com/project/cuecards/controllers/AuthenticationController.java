@@ -25,7 +25,7 @@ public class AuthenticationController {
         this.authenticate = authenticate;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
     public ResponseEntity<?> createNewUser(@RequestBody RegisterRequest registerRequest) {
         try {
             createNewUser.create(registerRequest);
@@ -40,7 +40,7 @@ public class AuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             return ResponseEntity.ok(authenticate.authenticate(authenticationRequest));

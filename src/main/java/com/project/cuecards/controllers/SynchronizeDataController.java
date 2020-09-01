@@ -25,7 +25,7 @@ public class SynchronizeDataController {
         this.saveUsersHomeData = saveUsersHomeData;
     }
 
-    @GetMapping("/get-users-data")
+    @GetMapping("/api/get-users-data")
     public ResponseEntity<?> getUsersData(@RequestHeader() String authorization) {
         try {
             return new ResponseEntity<>(getUsersHomeData.get(getUsernameFromToken(authorization)), HttpStatus.OK);
@@ -39,7 +39,7 @@ public class SynchronizeDataController {
         return jwtUtil.extractUsername(token);
     }
 
-    @RequestMapping(value = "/save-users-data", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/save-users-data", method = RequestMethod.POST)
     public ResponseEntity<?> saveUsersData(@RequestHeader String authorization, @RequestBody DataViewModel viewModel) {
         String usernameFromToken = getUsernameFromToken(authorization);
         try {

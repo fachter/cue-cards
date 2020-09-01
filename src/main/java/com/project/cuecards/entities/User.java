@@ -35,7 +35,7 @@ public class User extends BaseEntity implements UserDetails {
 
     private String fullName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

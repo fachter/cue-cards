@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestApiController {
 
-    @GetMapping("/")
+    @GetMapping("/api/")
     public ResponseEntity<String> testFunction() {
         return new ResponseEntity<>("Test", HttpStatus.OK);
     }
 
-    @GetMapping("/getAvailableRooms")
+    @GetMapping("/api/getAvailableRooms")
     public ResponseEntity<?> getRoomsForUser() {
         User user = LoggedInUserService.getLoggedInUser();
         return new ResponseEntity<>(user.getAvailableRooms(), HttpStatus.ACCEPTED);

@@ -33,19 +33,19 @@ public class RoomController {
         this.deleteRooms = deleteRooms;
     }
 
-    @GetMapping("/get-available-rooms")
+    @GetMapping("/api/get-available-rooms")
     public ResponseEntity<?> getAllRooms() {
         ArrayList<RoomViewModel> rooms = allRooms.get(LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-    @PostMapping("/delete-rooms")
+    @PostMapping("/api/delete-rooms")
     public ResponseEntity<?> deleteRoom(@RequestBody RoomViewModel[] roomViewModels) {
         deleteRooms.delete(roomViewModels);
         return new ResponseEntity<>("Raum / Räume deleted", HttpStatus.OK);
     }
 
-    @PostMapping("/room")
+    @PostMapping("/api/room")
     public ResponseEntity<?> addRoom(@RequestBody RoomViewModel roomViewModel) {
         try {
             addOrEditRoom.add(roomViewModel, LoggedInUserService.getLoggedInUser());
@@ -56,7 +56,7 @@ public class RoomController {
     }
 
     // Object mit Passwort zurück schicken
-    @GetMapping("/join-room/{roomId}")
+    @GetMapping("/api/join-room/{roomId}")
     public ResponseEntity<?> joinRoom(@PathVariable Long roomId) {
         joinRoom.join(roomId, LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(HttpStatus.OK);
