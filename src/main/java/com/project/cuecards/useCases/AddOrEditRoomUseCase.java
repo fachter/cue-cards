@@ -7,6 +7,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.RoomNotFoundException;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.viewModels.RoomViewModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class AddOrEditRoomUseCase implements AddOrEditRoom {
     private final PasswordEncoder passwordEncoder;
     private User loggedInUser;
 
+    @Autowired
     public AddOrEditRoomUseCase(RoomGateway roomGateway, PasswordEncoder passwordEncoder) {
         this.roomGateway = roomGateway;
         this.passwordEncoder = passwordEncoder;

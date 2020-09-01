@@ -6,11 +6,15 @@ import com.project.cuecards.exceptions.RoomHasPasswordException;
 import com.project.cuecards.exceptions.RoomNotFoundException;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.viewModels.RoomViewModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GetRoomUseCase implements GetRoom {
 
     private final RoomGateway roomGateway;
 
+    @Autowired
     public GetRoomUseCase(RoomGateway roomGateway) {
         this.roomGateway = roomGateway;
     }
