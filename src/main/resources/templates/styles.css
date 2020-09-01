@@ -1,0 +1,24 @@
+*{
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+.login{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    padding: 0 150px;
+}
+
+.overLogin {
+    position: absolute;
+    width: 100%;
+    padding: 0 50px;
+}
+
+#banner{
+     max-width: 80%;
+     height: auto;
+     margin-top: 100px;
+}
