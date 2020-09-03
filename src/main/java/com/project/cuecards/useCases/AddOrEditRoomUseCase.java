@@ -8,20 +8,17 @@ import com.project.cuecards.exceptions.RoomNotFoundException;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.viewModels.RoomViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AddOrEditRoomUseCase implements AddOrEditRoom {
 
     private final RoomGateway roomGateway;
-    private final PasswordEncoder passwordEncoder;
     private User loggedInUser;
 
     @Autowired
-    public AddOrEditRoomUseCase(RoomGateway roomGateway, PasswordEncoder passwordEncoder) {
+    public AddOrEditRoomUseCase(RoomGateway roomGateway) {
         this.roomGateway = roomGateway;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,8 +28,14 @@ public class AddOrEditRoomUseCase implements AddOrEditRoom {
         this.loggedInUser = loggedInUser;
         Room room = getRoom(roomViewModel)
                 .setName(roomViewModel.name)
-                .setPassword(passwordEncoder.encode(roomViewModel.password));
+                .setPassword(getPassword(roomViewModel));
         roomGateway.save(room);
+    }
+
+    private String getPassword(RoomViewModel roomViewModel) {
+        if (roomViewModel.password == null || roomViewModel.password.equals(""))
+            return null;
+        return roomViewModel.password;
     }
 
     private Room getRoom(RoomViewModel roomViewModel) {

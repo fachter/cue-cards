@@ -2,6 +2,7 @@ package com.project.cuecards.controllers;
 
 import com.project.cuecards.boundaries.*;
 import com.project.cuecards.exceptions.InvalidArgumentException;
+import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.RoomHasPasswordException;
 import com.project.cuecards.exceptions.RoomNotFoundException;
 import com.project.cuecards.services.LoggedInUserService;
@@ -17,18 +18,18 @@ public class RoomController {
 
     private final AllRooms allRooms;
     private final AddOrEditRoom addOrEditRoom;
-    private final JoinRoom joinRoom;
+    private final AuthenticateToRoom authenticateToRoom;
     private final GetRoom getRoom;
     private final DeleteRooms deleteRooms;
 
     public RoomController(AllRooms allRooms,
                           AddOrEditRoom addOrEditRoom,
-                          JoinRoom joinRoom,
+                          AuthenticateToRoom authenticateToRoom,
                           GetRoom getRoom,
                           DeleteRooms deleteRooms) {
         this.allRooms = allRooms;
         this.addOrEditRoom = addOrEditRoom;
-        this.joinRoom = joinRoom;
+        this.authenticateToRoom = authenticateToRoom;
         this.getRoom = getRoom;
         this.deleteRooms = deleteRooms;
     }
@@ -55,11 +56,23 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Object mit Passwort zurück schicken
-    @GetMapping("/api/get-room/{roomId}")
+    @PostMapping("/api/join-room/authenticate")
+    public ResponseEntity<?> authenticateToRoom(@RequestBody RoomViewModel viewModel) {
+        try {
+            authenticateToRoom.authenticate(viewModel, LoggedInUserService.getLoggedInUser());
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>("Wrong Password", HttpStatus.BAD_REQUEST);
+        } catch (RoomNotFoundException roomNotFoundException) {
+            return new ResponseEntity<>("No such Room", HttpStatus.valueOf(404));
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/api/join-room/{roomId}")
     public ResponseEntity<?> joinRoom(@PathVariable Long roomId) {
         try {
-            return new ResponseEntity<>(getRoom.get(roomId), HttpStatus.OK);
+            return new ResponseEntity<>(getRoom.join(roomId, LoggedInUserService.getLoggedInUser()),
+                    HttpStatus.OK);
         } catch (RoomHasPasswordException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.valueOf(202));
         } catch (RoomNotFoundException roomNotFoundException) {
