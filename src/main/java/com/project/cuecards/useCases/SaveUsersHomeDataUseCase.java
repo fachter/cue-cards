@@ -58,6 +58,10 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         }
         addFoldersToList(viewModel.folders);
         persistToDb();
+        if (viewModel.lastModified != null) {
+            user.setLastModifiedDateTime(viewModel.lastModified);
+            userGateway.saveUser(user);
+        }
     }
 
     private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels) {

@@ -10,4 +10,6 @@ public interface UserGateway {
     User getUserByUsername(String username) throws UserDoesNotExistException;
 
     void addUser(User cueCarder) throws UserAlreadyExistsException;
+
+    void saveUser(User user);
 }

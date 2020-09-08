@@ -14,8 +14,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.lang.model.util.Types;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +30,7 @@ class LeaveRoomUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new LeaveRoomUseCaseImpl(roomGatewayMock, userGatewayMock);
+        useCase = new LeaveRoomUseCaseImpl(roomGatewayMock);
     }
 
     @Test

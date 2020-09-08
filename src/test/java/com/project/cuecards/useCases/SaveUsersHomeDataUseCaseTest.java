@@ -23,6 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,11 +111,13 @@ public class SaveUsersHomeDataUseCaseTest {
     }
 
     @Test
-    public void givenOneNewFolder() throws Exception {
+    public void givenOneNewFolderAndLastModified() throws Exception {
         when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
         when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(new ArrayList<>());
         FolderViewModel folderViewModel = createFolderViewModel("Test");
         viewModel.folders.add(folderViewModel);
+        LocalDateTime dateTime = LocalDateTime.of(2020, 1, 1, 1, 1, 1, 1);
+        viewModel.lastModified = dateTime;
         ArrayList<Folder> expectedFolders = new ArrayList<>();
         Folder folder = new Folder();
         folder.setUid(newFolderUid);
@@ -129,6 +132,8 @@ public class SaveUsersHomeDataUseCaseTest {
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
         assertThat(captor.getValue()).usingRecursiveFieldByFieldElementComparator()
                 .isEqualTo(expectedFolders);
+        verify(userGatewayMock, times(1)).saveUser(validUser);
+        assertEquals(dateTime, validUser.getLastModifiedDateTime());
     }
 
     @Test

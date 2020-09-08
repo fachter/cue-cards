@@ -33,4 +33,9 @@ public class UserGatewayImpl implements UserGateway {
             throw new UserAlreadyExistsException();
         }
     }
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 }
