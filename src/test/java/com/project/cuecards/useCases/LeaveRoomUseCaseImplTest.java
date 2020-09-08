@@ -69,4 +69,18 @@ class LeaveRoomUseCaseImplTest {
         verify(roomGatewayMock, times(1)).deleteRoom(testRoom);
         verify(roomGatewayMock, times(0)).save(any());
     }
+
+    @Test
+    public void givenRoomHasNoSuchUser() throws Exception {
+        Room testRoom = (Room) new Room().setName("TestRoom").setPassword("password")
+                .setPictureNumber(3).setId(321L);
+        testRoom.getAllowedUsers().add(loggedInUser);
+        loggedInUser.getAvailableRooms().add(testRoom);
+        when(roomGatewayMock.getById(321L)).thenReturn(testRoom);
+
+        useCase.leave(321L, (User) new User().setId(3L));
+
+        verify(roomGatewayMock, times(0)).deleteRoom(testRoom);
+        verify(roomGatewayMock, times(0)).save(any());
+    }
 }

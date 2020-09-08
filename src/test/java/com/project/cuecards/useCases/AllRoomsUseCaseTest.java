@@ -30,7 +30,7 @@ class AllRoomsUseCaseTest {
     }
 
     @Test
-    public void givenNoRoomsAvailable_thenReturnEmptyArrayList() throws Exception {
+    public void givenNoRoomsAvailable_thenReturnEmptyArrayList() {
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(new ArrayList<>());
 
         ArrayList<RoomViewModel> roomViewModels = allRooms.get(loggedInUser);
@@ -39,9 +39,9 @@ class AllRoomsUseCaseTest {
     }
 
     @Test
-    public void givenOneRoom_thenReturnListWithOneRoomViewModel() throws Exception {
+    public void givenOneRoom_thenReturnListWithOneRoomViewModel() {
         ArrayList<Room> rooms = new ArrayList<>();
-        rooms.add((Room) new Room().setName("Test Room").setPassword("testPassword").setId(123L));
+        rooms.add((Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L));
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
 
         ArrayList<RoomViewModel> roomViewModels = allRooms.get(loggedInUser);
@@ -49,6 +49,7 @@ class AllRoomsUseCaseTest {
         assertEquals(1, roomViewModels.size());
         assertEquals("Test Room", roomViewModels.get(0).name);
         assertEquals("testPassword", roomViewModels.get(0).password);
+        assertEquals(3, roomViewModels.get(0).pictureNumber);
         assertEquals(123L, roomViewModels.get(0).id);
     }
 }

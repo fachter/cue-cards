@@ -28,6 +28,7 @@ public class AllRoomsUseCase implements AllRooms {
             roomViewModel.id = room.getId();
             roomViewModel.name = room.getName();
             roomViewModel.password = room.getPassword();
+            roomViewModel.pictureNumber = room.getPictureNumber();
             roomViewModels.add(roomViewModel);
         }
         return roomViewModels;
