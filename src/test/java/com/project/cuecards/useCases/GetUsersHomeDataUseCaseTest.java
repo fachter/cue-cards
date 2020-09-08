@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +39,15 @@ class GetUsersHomeDataUseCaseTest {
     private final DataViewModel expectedViewModel = new DataViewModel();
     private final ArrayList<Folder> expectedFolders = new ArrayList<>();
     private final String existingUid = "existingUid";
+    private final LocalDateTime lastModifiedDate = LocalDateTime.of(2020,1,2,3,4,5,6);
 
     @BeforeEach
     void setUp() {
         validUser.setUsername(validUsername);
+        validUser.setLastModifiedDateTime(lastModifiedDate);
         useCase = new GetUsersHomeDataUseCase(userGatewayMock, folderGatewayMock);
         expectedViewModel.folders = new ArrayList<>();
+        expectedViewModel.lastModified = lastModifiedDate;
     }
 
     private void prepareMocks() throws UserDoesNotExistException, InvalidArgumentException {
@@ -71,10 +75,12 @@ class GetUsersHomeDataUseCaseTest {
     @Test
     public void testGivenUserHasNoFolders_thenReturnEmptyDataViewModel() throws Exception {
         prepareMocks();
+        DataViewModel expectedViewModel = new DataViewModel();
+        expectedViewModel.lastModified = lastModifiedDate;
 
         DataViewModel dataViewModel = useCase.get(validUsername);
 
-        assertThat(dataViewModel).usingRecursiveComparison().isEqualTo(new DataViewModel());
+        assertThat(dataViewModel).usingRecursiveComparison().isEqualTo(expectedViewModel);
     }
 
     @Test

@@ -39,6 +39,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
             return new DataViewModel();
         }
         DataViewModel viewModel = new DataViewModel();
+        viewModel.lastModified = user.getLastModifiedDateTime();
         addFolderAndSetViewModelsFromList(folders, viewModel.folders);
         return viewModel;
     }
