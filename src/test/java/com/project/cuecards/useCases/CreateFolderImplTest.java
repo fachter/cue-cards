@@ -58,7 +58,7 @@ class CreateFolderImplTest {
     }
 
     @Test
-    public void create_givenRootFolderDoesNotExists_thenThrowException() {
+    public void create_givenRootFolderDoesNotExists_thenThrowException() throws Exception {
         when(folderGatewayMock.getFolderById(1)).thenThrow(new EntityNotFoundException());
 
         assertThrows(EntityNotFoundException.class, () -> useCase.create(testFolderName, 1));

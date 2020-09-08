@@ -11,6 +11,7 @@ public class Room extends BaseEntity {
 
     private String name;
     private String password;
+    private int pictureNumber;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<CueCard> cueCards = new ArrayList<>();
@@ -56,6 +57,15 @@ public class Room extends BaseEntity {
 
     public Room setAllowedUsers(Set<User> allowedUsers) {
         this.allowedUsers = allowedUsers;
+        return this;
+    }
+
+    public int getPictureNumber() {
+        return pictureNumber;
+    }
+
+    public Room setPictureNumber(int pictureNumber) {
+        this.pictureNumber = pictureNumber;
         return this;
     }
 }

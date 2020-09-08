@@ -2,6 +2,7 @@ package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.CreateFolder;
 import com.project.cuecards.entities.Folder;
+import com.project.cuecards.exceptions.EntityNotFoundException;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.gateways.FolderGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,13 @@ public class CreateFolderImpl implements CreateFolder {
             throw new InvalidArgumentException();
         Folder folder = new Folder();
         folder.setName(name);
-        if (rootFolderId != null)
-            folder.setRootFolder(folderGateway.getFolderById(rootFolderId));
+        if (rootFolderId != null) {
+            try {
+                folder.setRootFolder(folderGateway.getFolderById(rootFolderId));
+            } catch (EntityNotFoundException e) {
+                folder.setRootFolder(null);
+            }
+        }
         folderGateway.add(folder);
     }
 }

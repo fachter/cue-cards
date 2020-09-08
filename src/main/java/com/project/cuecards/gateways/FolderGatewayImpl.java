@@ -2,12 +2,14 @@ package com.project.cuecards.gateways;
 
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.User;
+import com.project.cuecards.exceptions.EntityNotFoundException;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.repositories.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class FolderGatewayImpl implements FolderGateway {
@@ -42,9 +44,11 @@ public class FolderGatewayImpl implements FolderGateway {
     }
 
     @Override
-    public Folder getFolderById(int rootFolderId) {
-        //TODO
-        return null;
+    public Folder getFolderById(long rootFolderId) throws EntityNotFoundException {
+        Optional<Folder> folder = folderRepository.findById(rootFolderId);
+        if (folder.isEmpty())
+            throw new EntityNotFoundException();
+        return folder.get();
     }
 
     @Override

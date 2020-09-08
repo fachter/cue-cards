@@ -48,7 +48,8 @@ class AddOrEditRoomUseCaseTest {
         RoomViewModel viewModel = new RoomViewModel();
         viewModel.name = "Room";
         viewModel.password = "password";
-        Room expectedRoom = new Room().setName("Room").setPassword("password");
+        viewModel.pictureNumber = 2;
+        Room expectedRoom = new Room().setName("Room").setPassword("password").setPictureNumber(2);
         expectedRoom.getAllowedUsers().add(loggedInUser);
         loggedInUser.getAvailableRooms().add(expectedRoom);
 
@@ -64,7 +65,8 @@ class AddOrEditRoomUseCaseTest {
         viewModel.id = 123L;
         viewModel.name = "new Name";
         viewModel.password = "newPassword";
-        Room existingRoom = (Room) new Room().setName("old Name").setPassword("oldPassword").setId(123L);
+        viewModel.pictureNumber = 3;
+        Room existingRoom = (Room) new Room().setName("old Name").setPassword("oldPassword").setPictureNumber(2).setId(123L);
         when(roomGatewayMock.getById(123L)).thenReturn(existingRoom);
 
         roomUseCase.add(viewModel, loggedInUser);
@@ -73,6 +75,7 @@ class AddOrEditRoomUseCaseTest {
         assertEquals(existingRoom, captor.getValue());
         assertEquals("new Name", existingRoom.getName());
         assertEquals("newPassword", existingRoom.getPassword());
+        assertEquals(3, existingRoom.getPictureNumber());
     }
 
     @Test

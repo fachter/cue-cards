@@ -28,7 +28,8 @@ public class AddOrEditRoomUseCase implements AddOrEditRoom {
         this.loggedInUser = loggedInUser;
         Room room = getRoom(roomViewModel)
                 .setName(roomViewModel.name)
-                .setPassword(getPassword(roomViewModel));
+                .setPassword(getPassword(roomViewModel))
+                .setPictureNumber(roomViewModel.pictureNumber);
         roomGateway.save(room);
     }
 
