@@ -12,4 +12,6 @@ public interface RoomGateway {
     Room getById(Long id) throws RoomNotFoundException;
 
     ArrayList<Room> getAllAvailableForUser(User user);
+
+    void deleteRoom(Room room);
 }

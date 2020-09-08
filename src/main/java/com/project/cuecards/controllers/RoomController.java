@@ -20,18 +20,18 @@ public class RoomController {
     private final AddOrEditRoom addOrEditRoom;
     private final AuthenticateToRoom authenticateToRoom;
     private final GetRoom getRoom;
-    private final DeleteRooms deleteRooms;
+    private final LeaveRoomUseCase leaveRoomUseCase;
 
     public RoomController(AllRooms allRooms,
                           AddOrEditRoom addOrEditRoom,
                           AuthenticateToRoom authenticateToRoom,
                           GetRoom getRoom,
-                          DeleteRooms deleteRooms) {
+                          LeaveRoomUseCase leaveRoomUseCase) {
         this.allRooms = allRooms;
         this.addOrEditRoom = addOrEditRoom;
         this.authenticateToRoom = authenticateToRoom;
         this.getRoom = getRoom;
-        this.deleteRooms = deleteRooms;
+        this.leaveRoomUseCase = leaveRoomUseCase;
     }
 
     @GetMapping("/api/get-available-rooms")
@@ -40,10 +40,14 @@ public class RoomController {
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-    @PostMapping("/api/delete-rooms")
-    public ResponseEntity<?> deleteRoom(@RequestBody RoomViewModel[] roomViewModels) {
-        deleteRooms.delete(roomViewModels);
-        return new ResponseEntity<>("Raum / Räume deleted", HttpStatus.OK);
+    @PostMapping("/api/leave-room/{roomId}")
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
+        try {
+            leaveRoomUseCase.leave(Long.valueOf(roomId), LoggedInUserService.getLoggedInUser());
+        } catch (RoomNotFoundException roomNotFoundException) {
+            roomNotFoundException.printStackTrace();
+        }
+        return new ResponseEntity<>("Raum verlassen", HttpStatus.OK);
     }
 
     @PostMapping("/api/room")

@@ -37,4 +37,9 @@ public class RoomGatewayImpl implements RoomGateway {
     public ArrayList<Room> getAllAvailableForUser(User user) {
         return (ArrayList<Room>) roomRepository.findAllByAllowedUsersContains(user);
     }
+
+    @Override
+    public void deleteRoom(Room room) {
+        roomRepository.delete(room);
+    }
 }
