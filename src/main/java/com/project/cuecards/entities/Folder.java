@@ -78,4 +78,13 @@ public class Folder extends BaseEntity {
         this.cueCards = cueCards;
         return this;
     }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Folder setRoom(Room room) {
+        this.room = room;
+        return this;
+    }
 }

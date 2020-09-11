@@ -5,8 +5,6 @@ import com.project.cuecards.entities.*;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
-import com.project.cuecards.gateways.AnswerGateway;
-import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.services.SaveDataViewModelService;
@@ -33,10 +31,10 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         this.saveDataViewModelService = saveDataViewModelService;
     }
 
-
     @Override
     public void save(DataViewModel viewModel, String username) throws InvalidDataException, UserDoesNotExistException {
         User user = userGateway.getUserByUsername(username);
+        saveDataViewModelService.setRoom(null);
         saveDataViewModelService.saveOrUpdateDataViewModel(viewModel, getExistingFolders(user), user);
         if (viewModel.lastModified != null) {
             user.setLastModifiedDateTime(viewModel.lastModified);

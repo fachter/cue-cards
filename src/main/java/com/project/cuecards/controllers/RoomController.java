@@ -54,7 +54,7 @@ public class RoomController {
     public ResponseEntity<?> addRoom(@RequestBody RoomViewModel roomViewModel) {
         try {
             addOrEditRoom.add(roomViewModel, LoggedInUserService.getLoggedInUser());
-        } catch (InvalidArgumentException e) {
+        } catch (InvalidArgumentException | InvalidDataException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,12 +1,16 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.AddOrEditRoom;
+import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.Room;
 import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidArgumentException;
-import com.project.cuecards.gateways.RoomGateway;
+import com.project.cuecards.exceptions.RoomNotFoundException;
+import com.project.cuecards.gateways.*;
+import com.project.cuecards.services.SaveDataViewModelServiceImpl;
+import com.project.cuecards.viewModels.DataViewModel;
+import com.project.cuecards.viewModels.FolderViewModel;
 import com.project.cuecards.viewModels.RoomViewModel;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +18,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,13 +30,18 @@ import static org.mockito.Mockito.*;
 class AddOrEditRoomUseCaseTest {
 
     @Mock private RoomGateway roomGatewayMock;
+    @Mock private FolderGateway folderGatewayMock;
+    @Mock private CueCardGateway cueCardGatewayMock;
+    @Mock private AnswerGateway answerGatewayMock;
     private AddOrEditRoom roomUseCase;
     private final User loggedInUser = new User().setFullName("Test").setUsername("test").setPassword("test");
-    @Captor private ArgumentCaptor<Room> captor;
+    @Captor private ArgumentCaptor<Room> roomCaptor;
+    @Captor private ArgumentCaptor<List<Folder>> folderCaptor;
 
     @BeforeEach
     void setUp() {
-        roomUseCase = new AddOrEditRoomUseCase(roomGatewayMock);
+        roomUseCase = new AddOrEditRoomUseCase(roomGatewayMock,
+                new SaveDataViewModelServiceImpl(folderGatewayMock, cueCardGatewayMock, answerGatewayMock));
     }
 
     @Test
@@ -55,8 +66,8 @@ class AddOrEditRoomUseCaseTest {
 
         roomUseCase.add(viewModel, loggedInUser);
 
-        verify(roomGatewayMock, times(1)).save(captor.capture());
-        assertThat(captor.getValue()).usingRecursiveComparison().isEqualTo(expectedRoom);
+        verify(roomGatewayMock, times(1)).save(roomCaptor.capture());
+        assertThat(roomCaptor.getValue()).usingRecursiveComparison().isEqualTo(expectedRoom);
     }
 
     @Test
@@ -71,30 +82,31 @@ class AddOrEditRoomUseCaseTest {
 
         roomUseCase.add(viewModel, loggedInUser);
 
-        verify(roomGatewayMock, times(1)).save(captor.capture());
-        assertEquals(existingRoom, captor.getValue());
+        verify(roomGatewayMock, times(1)).save(roomCaptor.capture());
+        assertEquals(existingRoom, roomCaptor.getValue());
         assertEquals("new Name", existingRoom.getName());
         assertEquals("newPassword", existingRoom.getPassword());
         assertEquals(3, existingRoom.getPictureNumber());
     }
 
     @Test
-    public void testRoomWithEmptyStringAsPassword_thenSaveNull() throws Exception {
+    public void givenRoomWithEmptyStringAsPassword_thenSaveNull() throws Exception {
         RoomViewModel viewModel = new RoomViewModel();
         viewModel.name = "Test";
         viewModel.password = "";
+        viewModel.data = null;
         Room expectedRoom = (Room) new Room().setName("Test").setPassword(null).setId(null);
         expectedRoom.getAllowedUsers().add(loggedInUser);
 
         roomUseCase.add(viewModel, loggedInUser);
 
-        verify(roomGatewayMock, times(1)).save(captor.capture());
-        Room actualRoom = captor.getValue();
+        verify(roomGatewayMock, times(1)).save(roomCaptor.capture());
+        Room actualRoom = roomCaptor.getValue();
         assertThat(actualRoom).usingRecursiveComparison().isEqualTo(expectedRoom);
     }
 
     @Test
-    public void testGivenRoomWithUserAlreadyAddedToAllowedUsers_thenDoNotAddAgain() throws Exception {
+    public void givenRoomWithUserAlreadyAddedToAllowedUsers_thenDoNotAddAgain() throws Exception {
         RoomViewModel viewModel = new RoomViewModel();
         viewModel.id = 123L;
         viewModel.name = "name";
@@ -106,5 +118,32 @@ class AddOrEditRoomUseCaseTest {
         roomUseCase.add(viewModel, loggedInUser);
 
         assertEquals(1, existingRoom.getAllowedUsers().size());
+    }
+
+    @Test
+    public void givenDataViewModel_thenSaveWithRoom() throws Exception {
+        RoomViewModel viewModel = new RoomViewModel();
+        viewModel.id = 123L;
+        viewModel.name = "name";
+        viewModel.password = "password";
+        viewModel.data = new DataViewModel();
+        LocalDateTime lastModified = LocalDateTime.of(2020,1,2,3,4,5,6);
+        viewModel.data.lastModified = lastModified;
+        FolderViewModel folderViewModel = new FolderViewModel();
+        folderViewModel.id = "testUidFolder";
+        folderViewModel.name = "Folder";
+        viewModel.data.folders.add(folderViewModel);
+        when(roomGatewayMock.getById(123L)).thenThrow(RoomNotFoundException.class);
+
+        roomUseCase.add(viewModel, loggedInUser);
+
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
+        assertEquals("Folder", actualFolders.get(0).getName());
+        assertEquals("testUidFolder", actualFolders.get(0).getUid());
+        verify(roomGatewayMock, times(1)).save(roomCaptor.capture());
+        Room room = roomCaptor.getValue();
+        assertEquals(room, actualFolders.get(0).getRoom());
+        assertEquals(lastModified, room.getLastModifiedDateTime());
     }
 }

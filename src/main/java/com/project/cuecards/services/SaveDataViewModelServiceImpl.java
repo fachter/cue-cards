@@ -27,11 +27,17 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     private List<CueCard> cardsToRemove;
     private List<Answer> answersToRemove;
     private User loggedInUser;
+    private Room room;
 
     public SaveDataViewModelServiceImpl(FolderGateway folderGateway, CueCardGateway cueCardGateway, AnswerGateway answerGateway) {
         this.folderGateway = folderGateway;
         this.cueCardGateway = cueCardGateway;
         this.answerGateway = answerGateway;
+    }
+
+    @Override
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     @Override
@@ -53,7 +59,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
 
     private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels) {
         for (FolderViewModel folderViewModel : folderViewModels) {
-            Folder folder = getFolderByIdOrNewFolder(folderViewModel, null);
+            Folder folder = getFolderWithRoom(folderViewModel, null);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
             foldersToPersist.add(folder);
@@ -63,12 +69,16 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     private void addSubFolders(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
         ArrayList<Folder> subFolders = new ArrayList<>();
         for (FolderViewModel folderViewModel : folderViewModels) {
-            Folder folder = getFolderByIdOrNewFolder(folderViewModel, rootFolder);
+            Folder folder = getFolderWithRoom(folderViewModel, rootFolder);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
             subFolders.add(folder);
         }
         rootFolder.setSubFolders(subFolders);
+    }
+
+    private Folder getFolderWithRoom(FolderViewModel folderViewModel, Folder rootFolder) {
+        return getFolderByIdOrNewFolder(folderViewModel, rootFolder).setRoom(room);
     }
 
     private Folder getFolderByIdOrNewFolder(FolderViewModel folderViewModel, Folder rootFolder) {
