@@ -14,7 +14,7 @@ public class Room extends BaseEntity {
     private int pictureNumber;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<CueCard> cueCards = new ArrayList<>();
+    private List<Folder> folders = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -42,12 +42,12 @@ public class Room extends BaseEntity {
         return this;
     }
 
-    public List<CueCard> getCueCards() {
-        return cueCards;
+    public List<Folder> getFolders() {
+        return folders;
     }
 
-    public Room setCueCards(List<CueCard> cueCards) {
-        this.cueCards = cueCards;
+    public Room setFolders(List<Folder> folders) {
+        this.folders = folders;
         return this;
     }
 

@@ -7,6 +7,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
 import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
@@ -45,7 +46,8 @@ class GetUsersHomeDataUseCaseTest {
     void setUp() {
         validUser.setUsername(validUsername);
         validUser.setLastModifiedDateTime(lastModifiedDate);
-        useCase = new GetUsersHomeDataUseCase(userGatewayMock, folderGatewayMock);
+        useCase = new GetUsersHomeDataUseCase(userGatewayMock,
+                folderGatewayMock, new PrepareDataViewModelServiceImpl());
         expectedViewModel.folders = new ArrayList<>();
         expectedViewModel.lastModified = lastModifiedDate;
     }
