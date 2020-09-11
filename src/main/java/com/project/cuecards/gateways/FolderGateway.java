@@ -7,6 +7,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public interface FolderGateway {
@@ -15,11 +16,11 @@ public interface FolderGateway {
 
     void add(Folder folder) throws InvalidArgumentException;
 
-    void addList(ArrayList<Folder> folder) throws InvalidArgumentException;
+    void addList(List<Folder> folder) throws InvalidArgumentException;
 
     Folder getFolderById(long rootFolderId) throws EntityNotFoundException;
 
-    ArrayList<Folder> getRootFoldersByUser(User user) throws InvalidArgumentException;
+    List<Folder> getRootFoldersByUser(User user) throws InvalidArgumentException;
 
-    void removeList(ArrayList<Folder> folders) throws InvalidArgumentException;
+    void removeList(List<Folder> folders) throws InvalidArgumentException;
 }

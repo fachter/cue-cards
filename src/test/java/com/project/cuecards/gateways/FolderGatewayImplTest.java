@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -99,7 +100,7 @@ class FolderGatewayImplTest {
         validUser.setUsername("validUsername");
         when(folderRepositoryMock.findAllByCreatedByAndRootFolderIsNull(validUser)).thenReturn(folders);
 
-        ArrayList<Folder> rootFoldersByUser = folderGateway.getRootFoldersByUser(validUser);
+        List<Folder> rootFoldersByUser = folderGateway.getRootFoldersByUser(validUser);
 
         assertEquals(folders, rootFoldersByUser);
     }

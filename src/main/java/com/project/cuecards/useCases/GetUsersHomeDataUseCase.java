@@ -37,7 +37,7 @@ public class GetUsersHomeDataUseCase implements GetUsersHomeData {
     @Override
     public DataViewModel get(String username) throws UserDoesNotExistException {
         user = userGateway.getUserByUsername(username);
-        ArrayList<Folder> folders;
+        List<Folder> folders;
         try {
             folders = folderGateway.getRootFoldersByUser(user);
         } catch (InvalidArgumentException e) {

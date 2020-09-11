@@ -6,7 +6,7 @@ import com.project.cuecards.repositories.CueCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CueCardGatewayImpl implements CueCardGateway {
@@ -19,7 +19,7 @@ public class CueCardGatewayImpl implements CueCardGateway {
     }
 
     @Override
-    public void removeList(ArrayList<CueCard> cueCards) throws InvalidArgumentException {
+    public void removeList(List<CueCard> cueCards) throws InvalidArgumentException {
         try {
             cueCardRepository.deleteAll(cueCards);
         } catch (Exception e) {

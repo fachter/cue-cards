@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,7 +36,7 @@ public class FolderGatewayImpl implements FolderGateway {
     }
 
     @Override
-    public void addList(ArrayList<Folder> folders) throws InvalidArgumentException {
+    public void addList(List<Folder> folders) throws InvalidArgumentException {
         try {
             folderRepository.saveAll(folders);
         } catch (Exception e) {
@@ -63,7 +64,7 @@ public class FolderGatewayImpl implements FolderGateway {
     }
 
     @Override
-    public void removeList(ArrayList<Folder> folders) throws InvalidArgumentException {
+    public void removeList(List<Folder> folders) throws InvalidArgumentException {
         try {
             folderRepository.deleteAll(folders);
         } catch (Exception e) {

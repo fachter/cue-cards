@@ -5,7 +5,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.repositories.AnswerRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AnswerGatewayImpl implements AnswerGateway {
@@ -17,7 +17,7 @@ public class AnswerGatewayImpl implements AnswerGateway {
     }
 
     @Override
-    public void removeList(ArrayList<Answer> answers) throws InvalidArgumentException {
+    public void removeList(List<Answer> answers) throws InvalidArgumentException {
         try {
             answerRepository.deleteAll(answers);
         } catch (Exception e) {
