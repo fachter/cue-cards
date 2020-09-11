@@ -1,10 +1,7 @@
 package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.AllRooms;
-import com.project.cuecards.entities.CueCard;
-import com.project.cuecards.entities.Folder;
-import com.project.cuecards.entities.Room;
-import com.project.cuecards.entities.User;
+import com.project.cuecards.entities.*;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
 import com.project.cuecards.viewModels.CueCardViewModel;
@@ -29,8 +26,8 @@ class AllRoomsUseCaseTest {
 
     private AllRooms allRooms;
     @Mock private RoomGateway roomGatewayMock;
-    private final User loggedInUser = new User()
-            .setUsername("username").setPassword("password");
+    private final User loggedInUser = (User) new User()
+            .setUsername("username").setPassword("password").setId(99L);
 
     @BeforeEach
     void setUp() {
@@ -71,6 +68,18 @@ class AllRoomsUseCaseTest {
         Folder set = (Folder) new Folder().setSet(true).setName("Set").setId(13L).setUid("testUidSet");
         set.setRootFolder(folder);
         CueCard cueCard = (CueCard) new CueCard().setQuestion("Frage").setSet(set).setId(52L).setUid("testUidCard");
+        CardLevel cardLevelFromOtherUser = (CardLevel) new CardLevel()
+                .setUser((User) new User().setFullName("Test").setId(88L))
+                .setCueCard(cueCard)
+                .setUsersCardLevel(5)
+                .setId(57L);
+        CardLevel cardLevelLoggedInUser = (CardLevel) new CardLevel()
+                .setUser(loggedInUser)
+                .setCueCard(cueCard)
+                .setUsersCardLevel(3)
+                .setId(56L);
+        cueCard.getCardLevels().add(cardLevelFromOtherUser);
+        cueCard.getCardLevels().add(cardLevelLoggedInUser);
         folder.getSubFolders().add(set);
         set.getCueCards().add(cueCard);
         room.getFolders().add(set);
@@ -95,6 +104,7 @@ class AllRoomsUseCaseTest {
         CueCardViewModel cardViewModel = new CueCardViewModel();
         cardViewModel.id = "testUidCard";
         cardViewModel.questionText = "Frage";
+        cardViewModel.cardLevel = 3;
         setViewModel.cards.add(cardViewModel);
         folderViewModel.subFolders.add(setViewModel);
         expectedDataViewModel.folders.add(folderViewModel);
