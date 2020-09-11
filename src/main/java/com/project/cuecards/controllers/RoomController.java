@@ -16,18 +16,18 @@ import java.util.ArrayList;
 @RestController
 public class RoomController {
 
-    private final AllRooms allRooms;
+    private final GetAllRoomsUseCase getAllRoomsUseCase;
     private final AddOrEditRoom addOrEditRoom;
     private final AuthenticateToRoom authenticateToRoom;
     private final GetRoom getRoom;
     private final LeaveRoomUseCase leaveRoomUseCase;
 
-    public RoomController(AllRooms allRooms,
+    public RoomController(GetAllRoomsUseCase getAllRoomsUseCase,
                           AddOrEditRoom addOrEditRoom,
                           AuthenticateToRoom authenticateToRoom,
                           GetRoom getRoom,
                           LeaveRoomUseCase leaveRoomUseCase) {
-        this.allRooms = allRooms;
+        this.getAllRoomsUseCase = getAllRoomsUseCase;
         this.addOrEditRoom = addOrEditRoom;
         this.authenticateToRoom = authenticateToRoom;
         this.getRoom = getRoom;
@@ -36,7 +36,7 @@ public class RoomController {
 
     @GetMapping("/api/get-available-rooms")
     public ResponseEntity<?> getAllRooms() {
-        ArrayList<RoomViewModel> rooms = allRooms.get(LoggedInUserService.getLoggedInUser());
+        ArrayList<RoomViewModel> rooms = getAllRoomsUseCase.get(LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 

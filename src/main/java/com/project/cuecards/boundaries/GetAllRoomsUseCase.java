@@ -5,7 +5,7 @@ import com.project.cuecards.viewModels.RoomViewModel;
 
 import java.util.ArrayList;
 
-public interface AllRooms {
+public interface GetAllRoomsUseCase {
 
     ArrayList<RoomViewModel> get(User loggedInUser);
 }

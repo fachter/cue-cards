@@ -48,14 +48,14 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
     @Override
     public void save(DataViewModel viewModel, String username) throws InvalidDataException, UserDoesNotExistException {
         user = userGateway.getUserByUsername(username);
-        foldersToPersist = new ArrayList<>();
-        cardsToRemove = new ArrayList<>();
-        answersToRemove = new ArrayList<>();
         try {
             existingFolders = folderGateway.getRootFoldersByUser(user);
         } catch (InvalidArgumentException e) {
             existingFolders = new ArrayList<>();
         }
+        foldersToPersist = new ArrayList<>();
+        cardsToRemove = new ArrayList<>();
+        answersToRemove = new ArrayList<>();
         addFoldersToList(viewModel.folders);
         persistToDb();
         if (viewModel.lastModified != null) {

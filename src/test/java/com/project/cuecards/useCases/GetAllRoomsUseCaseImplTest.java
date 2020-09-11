@@ -1,6 +1,6 @@
 package com.project.cuecards.useCases;
 
-import com.project.cuecards.boundaries.AllRooms;
+import com.project.cuecards.boundaries.GetAllRoomsUseCase;
 import com.project.cuecards.entities.*;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
@@ -22,23 +22,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AllRoomsUseCaseTest {
+class GetAllRoomsUseCaseImplTest {
 
-    private AllRooms allRooms;
+    private GetAllRoomsUseCase getAllRoomsUseCase;
     @Mock private RoomGateway roomGatewayMock;
     private final User loggedInUser = (User) new User()
             .setUsername("username").setPassword("password").setId(99L);
 
     @BeforeEach
     void setUp() {
-        allRooms = new AllRoomsUseCase(roomGatewayMock, new PrepareDataViewModelServiceImpl());
+        getAllRoomsUseCase = new GetAllRoomsUseCaseImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl());
     }
 
     @Test
     public void givenNoRoomsAvailable_thenReturnEmptyArrayList() {
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(new ArrayList<>());
 
-        ArrayList<RoomViewModel> roomViewModels = allRooms.get(loggedInUser);
+        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertEquals(0, roomViewModels.size());
     }
@@ -49,13 +49,13 @@ class AllRoomsUseCaseTest {
         rooms.add((Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L));
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
 
-        ArrayList<RoomViewModel> roomViewModels = allRooms.get(loggedInUser);
+        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertEquals(1, roomViewModels.size());
         assertEquals("Test Room", roomViewModels.get(0).name);
-        assertEquals(null, roomViewModels.get(0).password);
         assertEquals(3, roomViewModels.get(0).pictureNumber);
         assertEquals(123L, roomViewModels.get(0).id);
+        assertNull(roomViewModels.get(0).password);
     }
 
     @Test
@@ -110,7 +110,7 @@ class AllRoomsUseCaseTest {
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
 
-        ArrayList<RoomViewModel> roomViewModels = allRooms.get(loggedInUser);
+        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertThat(roomViewModels.get(0)).usingRecursiveComparison().isEqualTo(expectedRoomViewModel);
     }

@@ -1,6 +1,6 @@
 package com.project.cuecards.useCases;
 
-import com.project.cuecards.boundaries.AllRooms;
+import com.project.cuecards.boundaries.GetAllRoomsUseCase;
 import com.project.cuecards.entities.Folder;
 import com.project.cuecards.entities.Room;
 import com.project.cuecards.entities.User;
@@ -15,15 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AllRoomsUseCase implements AllRooms {
+public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
 
     private final RoomGateway roomGateway;
     private final PrepareDataViewModelService prepareDataViewModelService;
     private User loggedInUser;
 
     @Autowired
-    public AllRoomsUseCase(RoomGateway roomGateway,
-                           PrepareDataViewModelService prepareDataViewModelService) {
+    public GetAllRoomsUseCaseImpl(RoomGateway roomGateway,
+                                  PrepareDataViewModelService prepareDataViewModelService) {
         this.roomGateway = roomGateway;
         this.prepareDataViewModelService = prepareDataViewModelService;
     }
