@@ -13,7 +13,7 @@ public class Room extends BaseEntity {
     private String password;
     private int pictureNumber;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Folder> folders = new ArrayList<>();
 
     @ManyToMany

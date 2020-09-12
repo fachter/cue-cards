@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +39,7 @@ class GetAllRoomsUseCaseImplTest {
     public void givenNoRoomsAvailable_thenReturnEmptyArrayList() {
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(new ArrayList<>());
 
-        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertEquals(0, roomViewModels.size());
     }
@@ -49,13 +50,13 @@ class GetAllRoomsUseCaseImplTest {
         rooms.add((Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L));
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
 
-        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertEquals(1, roomViewModels.size());
         assertEquals("Test Room", roomViewModels.get(0).name);
         assertEquals(3, roomViewModels.get(0).pictureNumber);
         assertEquals(123L, roomViewModels.get(0).id);
-        assertNull(roomViewModels.get(0).password);
+        assertEquals("testPassword", roomViewModels.get(0).password);
     }
 
     @Test
@@ -91,6 +92,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedRoomViewModel.id = 123L;
         expectedRoomViewModel.pictureNumber = 3;
         expectedRoomViewModel.name = "Test Room";
+        expectedRoomViewModel.password = "testPassword";
         DataViewModel expectedDataViewModel = new DataViewModel();
         expectedDataViewModel.lastModified = lastModified;
         FolderViewModel folderViewModel = new FolderViewModel();
@@ -110,7 +112,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
 
-        ArrayList<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertThat(roomViewModels.get(0)).usingRecursiveComparison().isEqualTo(expectedRoomViewModel);
     }

@@ -28,19 +28,20 @@ public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
         this.prepareDataViewModelService = prepareDataViewModelService;
     }
     @Override
-    public ArrayList<RoomViewModel> get(User loggedInUser) {
+    public List<RoomViewModel> get(User loggedInUser) {
         this.loggedInUser = loggedInUser;
-        ArrayList<Room> rooms = roomGateway.getAllAvailableForUser(loggedInUser);
-        ArrayList<RoomViewModel> roomViewModels = new ArrayList<>();
+        List<Room> rooms = roomGateway.getAllAvailableForUser(loggedInUser);
+        List<RoomViewModel> roomViewModels = new ArrayList<>();
         for (Room room : rooms)
             getRoomViewModelFromRoom(roomViewModels, room);
         return roomViewModels;
     }
 
-    private void getRoomViewModelFromRoom(ArrayList<RoomViewModel> roomViewModels, Room room) {
+    private void getRoomViewModelFromRoom(List<RoomViewModel> roomViewModels, Room room) {
         RoomViewModel roomViewModel = new RoomViewModel();
         roomViewModel.id = room.getId();
         roomViewModel.name = room.getName();
+        roomViewModel.password = room.getPassword();
         roomViewModel.pictureNumber = room.getPictureNumber();
         roomViewModel.data = getDataViewModelForRoom(room);
         roomViewModels.add(roomViewModel);

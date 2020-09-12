@@ -16,7 +16,7 @@ public class Folder extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     private Folder rootFolder = null;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Room room = null;
 
     @OneToMany(mappedBy = "rootFolder", cascade = CascadeType.ALL)
