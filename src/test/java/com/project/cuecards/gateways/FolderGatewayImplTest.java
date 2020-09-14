@@ -98,7 +98,7 @@ class FolderGatewayImplTest {
         folders.add(set);
         User validUser = new User();
         validUser.setUsername("validUsername");
-        when(folderRepositoryMock.findAllByCreatedByAndRootFolderIsNull(validUser)).thenReturn(folders);
+        when(folderRepositoryMock.findAllByCreatedByAndRootFolderIsNullAndRoomIsNull(validUser)).thenReturn(folders);
 
         List<Folder> rootFoldersByUser = folderGateway.getRootFoldersByUser(validUser);
 
@@ -107,7 +107,7 @@ class FolderGatewayImplTest {
 
     @Test
     public void getRootFoldersByUser_givenRepoThrowsException_thenThrowException() {
-        doThrow(IllegalArgumentException.class).when(folderRepositoryMock).findAllByCreatedByAndRootFolderIsNull(any());
+        doThrow(IllegalArgumentException.class).when(folderRepositoryMock).findAllByCreatedByAndRootFolderIsNullAndRoomIsNull(any());
 
         Assertions.assertThrows(InvalidArgumentException.class, () -> folderGateway.getRootFoldersByUser(new User()));
     }

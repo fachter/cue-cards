@@ -57,7 +57,7 @@ public class FolderGatewayImpl implements FolderGateway {
         if (user == null)
             throw new InvalidArgumentException();
         try {
-            return folderRepository.findAllByCreatedByAndRootFolderIsNull(user);
+            return folderRepository.findAllByCreatedByAndRootFolderIsNullAndRoomIsNull(user);
         } catch (Exception e) {
             throw new InvalidArgumentException();
         }

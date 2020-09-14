@@ -10,5 +10,5 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     Folder findByNameAndRootFolder(String name, Folder rootFolder);
 
-    ArrayList<Folder> findAllByCreatedByAndRootFolderIsNull(User user);
+    ArrayList<Folder> findAllByCreatedByAndRootFolderIsNullAndRoomIsNull(User user);
 }
