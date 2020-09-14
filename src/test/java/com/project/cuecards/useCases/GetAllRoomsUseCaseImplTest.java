@@ -4,19 +4,20 @@ import com.project.cuecards.boundaries.GetAllRoomsUseCase;
 import com.project.cuecards.entities.*;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
-import com.project.cuecards.viewModels.CueCardViewModel;
-import com.project.cuecards.viewModels.DataViewModel;
-import com.project.cuecards.viewModels.FolderViewModel;
-import com.project.cuecards.viewModels.RoomViewModel;
+import com.project.cuecards.viewModels.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.lang.model.util.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,8 @@ class GetAllRoomsUseCaseImplTest {
     private GetAllRoomsUseCase getAllRoomsUseCase;
     @Mock private RoomGateway roomGatewayMock;
     private final User loggedInUser = (User) new User()
-            .setUsername("username").setPassword("password").setId(99L);
+            .setUsername("username").setPassword("password").setFullName("Test User").setId(999L);
+    @Captor private ArgumentCaptor<List<UserViewModel>> captor;
 
     @BeforeEach
     void setUp() {
@@ -86,6 +88,7 @@ class GetAllRoomsUseCaseImplTest {
         room.getFolders().add(set);
         room.getFolders().add(folder);
         room.setId(123L);
+        room.getAllowedUsers().add(loggedInUser);
         rooms.add(room);
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
         RoomViewModel expectedRoomViewModel = new RoomViewModel();
@@ -111,9 +114,39 @@ class GetAllRoomsUseCaseImplTest {
         folderViewModel.subFolders.add(setViewModel);
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
+        UserViewModel userViewModel = new UserViewModel();
+        userViewModel.name = "Test Fullname";
+        userViewModel.pictureUrl = "test.url";
+        expectedRoomViewModel.users.add(userViewModel);
+        loggedInUser.setFullName("Test Fullname").setPictureUrl("test.url");
 
         List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
         assertThat(roomViewModels.get(0)).usingRecursiveComparison().isEqualTo(expectedRoomViewModel);
+    }
+
+    @Test
+    public void givenMultipleRoomsWithAllowedUsers_thenShowThemInViewModel() throws Exception {
+        Room roomWithUsers = (Room) new Room().setName("TestRoom").setPictureNumber(3).setId(123L);
+        User user1 = (User) new User().setFullName("User 1").setId(312L);
+        User user2 = (User) new User().setFullName("User 2").setId(352L);
+        User user3 = (User) new User().setFullName("User 3").setId(398L);
+        roomWithUsers.setAllowedUsers(Set.of(user1, user2, user3, loggedInUser));
+        Room roomWithDifferentUsers = (Room) new Room().setName("Different Room").setPassword("password").setPictureNumber(2).setId(321L);
+        User user4 = (User) new User().setFullName("User 4").setId(512L);
+        User user5 = (User) new User().setFullName("User 5").setId(513L);
+        User user6 = (User) new User().setFullName("User 6").setId(514L);
+        roomWithDifferentUsers.setAllowedUsers(Set.of(user4, user5, user6));
+        List<Room> rooms = new ArrayList<>();
+        rooms.add(roomWithUsers);
+        rooms.add(roomWithDifferentUsers);
+        when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
+
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+
+        assertEquals(2, roomViewModels.size());
+        assertEquals(4, roomViewModels.get(0).users.size());
+        assertEquals(3, roomViewModels.get(1).users.size());
+        assertNotNull(roomViewModels.get(0).users.get(0).name);
     }
 }

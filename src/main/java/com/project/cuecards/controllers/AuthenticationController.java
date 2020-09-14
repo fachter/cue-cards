@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
+@RequestMapping(path = "api")
 public class AuthenticationController {
 
     private final CreateNewUser createNewUser;
@@ -25,7 +26,7 @@ public class AuthenticationController {
         this.authenticate = authenticate;
     }
 
-    @RequestMapping(value = "/api/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> createNewUser(@RequestBody RegisterRequest registerRequest) {
         try {
             createNewUser.create(registerRequest);
@@ -40,7 +41,7 @@ public class AuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/api/authenticate", method = RequestMethod.POST)
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             return ResponseEntity.ok(authenticate.authenticate(authenticationRequest));

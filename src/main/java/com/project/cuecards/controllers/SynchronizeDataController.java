@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(path = "api")
 public class SynchronizeDataController {
 
     private final GetUsersHomeData getUsersHomeData;
@@ -25,7 +26,7 @@ public class SynchronizeDataController {
         this.saveUsersHomeData = saveUsersHomeData;
     }
 
-    @GetMapping("/api/get-users-data")
+    @GetMapping("/get-users-data")
     public ResponseEntity<?> getUsersData(@RequestHeader() String authorization) {
         try {
             return new ResponseEntity<>(getUsersHomeData.get(getUsernameFromToken(authorization)), HttpStatus.OK);
@@ -39,7 +40,7 @@ public class SynchronizeDataController {
         return jwtUtil.extractUsername(token);
     }
 
-    @RequestMapping(value = "/api/save-users-data", method = RequestMethod.POST)
+    @RequestMapping(value = "/save-users-data", method = RequestMethod.POST)
     public ResponseEntity<?> saveUsersData(@RequestHeader String authorization, @RequestBody DataViewModel viewModel) {
         String usernameFromToken = getUsernameFromToken(authorization);
         try {

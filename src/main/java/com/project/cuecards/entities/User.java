@@ -34,6 +34,7 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
     private String fullName;
+    private String pictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
@@ -157,6 +158,15 @@ public class User extends BaseEntity implements UserDetails {
 
     public Set<Room> getAvailableRooms() {
         return availableRooms;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public User setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+        return this;
     }
 
     public User setAvailableRooms(Set<Room> availableRooms) {

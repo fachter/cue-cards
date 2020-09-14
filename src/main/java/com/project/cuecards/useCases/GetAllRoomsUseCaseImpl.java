@@ -8,6 +8,7 @@ import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.PrepareDataViewModelService;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.RoomViewModel;
+import com.project.cuecards.viewModels.UserViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
         roomViewModel.password = room.getPassword();
         roomViewModel.pictureNumber = room.getPictureNumber();
         roomViewModel.data = getDataViewModelForRoom(room);
+        roomViewModel.users = getAllowedUsers(room);
         roomViewModels.add(roomViewModel);
     }
 
@@ -60,5 +62,16 @@ public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
                 rootFolders.add(folder);
         }
         return rootFolders;
+    }
+
+    private List<UserViewModel> getAllowedUsers(Room room) {
+        List<UserViewModel> allowedUsers = new ArrayList<>();
+        for (User allowedUser : room.getAllowedUsers()) {
+            UserViewModel allowedUserViewModel = new UserViewModel();
+            allowedUserViewModel.name = allowedUser.getFullName();
+            allowedUserViewModel.pictureUrl = allowedUser.getPictureUrl();
+            allowedUsers.add(allowedUserViewModel);
+        }
+        return allowedUsers;
     }
 }

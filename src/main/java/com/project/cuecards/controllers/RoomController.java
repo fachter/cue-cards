@@ -11,10 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "api")
 public class RoomController {
 
     private final GetAllRoomsUseCase getAllRoomsUseCase;
@@ -35,13 +35,13 @@ public class RoomController {
         this.leaveRoomUseCase = leaveRoomUseCase;
     }
 
-    @GetMapping("/api/get-available-rooms")
+    @GetMapping("/get-available-rooms")
     public ResponseEntity<?> getAllRooms() {
         List<RoomViewModel> rooms = getAllRoomsUseCase.get(LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-    @PostMapping("/api/leave-room/{roomId}")
+    @PostMapping("/leave-room/{roomId}")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
         try {
             leaveRoomUseCase.leave(Long.valueOf(roomId), LoggedInUserService.getLoggedInUser());
@@ -51,7 +51,7 @@ public class RoomController {
         return new ResponseEntity<>("Raum verlassen", HttpStatus.OK);
     }
 
-    @PostMapping("/api/room")
+    @PostMapping("/room")
     public ResponseEntity<?> addRoom(@RequestBody RoomViewModel roomViewModel) {
         try {
             addOrEditRoom.add(roomViewModel, LoggedInUserService.getLoggedInUser());
@@ -61,7 +61,7 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/api/join-room/authenticate")
+    @PostMapping("/join-room/authenticate")
     public ResponseEntity<?> authenticateToRoom(@RequestBody RoomViewModel viewModel) {
         try {
             authenticateToRoom.authenticate(viewModel, LoggedInUserService.getLoggedInUser());
@@ -73,7 +73,7 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/api/join-room/{roomId}")
+    @GetMapping("/join-room/{roomId}")
     public ResponseEntity<?> joinRoom(@PathVariable Long roomId) {
         try {
             return new ResponseEntity<>(getRoom.join(roomId, LoggedInUserService.getLoggedInUser()),
