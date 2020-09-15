@@ -3,6 +3,7 @@ package com.project.cuecards.useCases;
 import com.project.cuecards.boundaries.GetAllRoomsUseCase;
 import com.project.cuecards.entities.*;
 import com.project.cuecards.gateways.RoomGateway;
+import com.project.cuecards.services.GetUserRoomsServiceImpl;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
 import com.project.cuecards.viewModels.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +30,10 @@ class GetAllRoomsUseCaseImplTest {
     @Mock private RoomGateway roomGatewayMock;
     private final User loggedInUser = (User) new User()
             .setUsername("username").setPassword("password").setFullName("Test User").setId(999L);
-    @Captor private ArgumentCaptor<List<UserViewModel>> captor;
 
     @BeforeEach
     void setUp() {
-        getAllRoomsUseCase = new GetAllRoomsUseCaseImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl());
+        getAllRoomsUseCase = new GetAllRoomsUseCaseImpl(new GetUserRoomsServiceImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl()));
     }
 
     @Test

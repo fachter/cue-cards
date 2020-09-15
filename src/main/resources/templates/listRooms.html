@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Räume</title>
+</head>
+<body>
+<h1>CueCards Räume</h1>
+
+<div>Mein Raum</div>
+<div th:each="room: ${rooms}">
+  <p th:text="${room.name}"></p>
+</div>
+</body>
+</html>
