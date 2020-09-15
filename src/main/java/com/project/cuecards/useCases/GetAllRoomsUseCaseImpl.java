@@ -45,7 +45,7 @@ public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
         roomViewModel.password = room.getPassword();
         roomViewModel.pictureNumber = room.getPictureNumber();
         roomViewModel.data = getDataViewModelForRoom(room);
-        roomViewModel.users = getAllowedUsers(room);
+        roomViewModel.user = getAllowedUsers(room);
         roomViewModels.add(roomViewModel);
     }
 

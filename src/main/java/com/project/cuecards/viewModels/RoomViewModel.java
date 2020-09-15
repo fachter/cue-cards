@@ -10,5 +10,5 @@ public class RoomViewModel {
     public String password;
     public int pictureNumber;
     public DataViewModel data = new DataViewModel();
-    public List<UserViewModel> users = new ArrayList<>();
+    public List<UserViewModel> user = new ArrayList<>();
 }
