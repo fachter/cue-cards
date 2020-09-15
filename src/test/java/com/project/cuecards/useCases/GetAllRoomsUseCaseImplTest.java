@@ -13,7 +13,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.lang.model.util.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +114,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
         UserViewModel userViewModel = new UserViewModel();
-        userViewModel.name = "Test Fullname";
+        userViewModel.fullName = "Test Fullname";
         userViewModel.pictureUrl = "test.url";
         expectedRoomViewModel.users.add(userViewModel);
         loggedInUser.setFullName("Test Fullname").setPictureUrl("test.url");
@@ -147,6 +146,6 @@ class GetAllRoomsUseCaseImplTest {
         assertEquals(2, roomViewModels.size());
         assertEquals(4, roomViewModels.get(0).users.size());
         assertEquals(3, roomViewModels.get(1).users.size());
-        assertNotNull(roomViewModels.get(0).users.get(0).name);
+        assertNotNull(roomViewModels.get(0).users.get(0).fullName);
     }
 }

@@ -68,7 +68,7 @@ public class GetAllRoomsUseCaseImpl implements GetAllRoomsUseCase {
         List<UserViewModel> allowedUsers = new ArrayList<>();
         for (User allowedUser : room.getAllowedUsers()) {
             UserViewModel allowedUserViewModel = new UserViewModel();
-            allowedUserViewModel.name = allowedUser.getFullName();
+            allowedUserViewModel.fullName = allowedUser.getFullName();
             allowedUserViewModel.pictureUrl = allowedUser.getPictureUrl();
             allowedUsers.add(allowedUserViewModel);
         }
