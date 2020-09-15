@@ -12,7 +12,12 @@ public class UsersProfileDataUseCaseImpl implements UsersProfileDataUseCase {
     public UserViewModel get(User loggedInUser) throws InvalidDataException {
         if (loggedInUser == null)
             throw new InvalidDataException();
+        return getUserViewModel(loggedInUser);
+    }
+
+    private UserViewModel getUserViewModel(User loggedInUser) {
         UserViewModel userViewModel = new UserViewModel();
+        userViewModel.username = loggedInUser.getUsername();
         userViewModel.fullName = loggedInUser.getFullName();
         userViewModel.pictureUrl = loggedInUser.getPictureUrl();
         userViewModel.email = loggedInUser.getEmail();

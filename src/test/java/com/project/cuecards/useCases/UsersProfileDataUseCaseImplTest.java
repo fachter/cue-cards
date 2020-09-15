@@ -26,10 +26,11 @@ class UsersProfileDataUseCaseImplTest {
     @Test
     public void givenUser_thenReturnFilledViewModel() throws Exception {
         User user = (User) new User().setFullName("Felix").setEmail("felix@email.de").setPictureUrl("url")
-                .setId(3L);
+                .setUsername("username").setId(3L);
 
         UserViewModel userViewModel = useCase.get(user);
 
+        assertEquals("username", userViewModel.username);
         assertEquals("Felix", userViewModel.fullName);
         assertEquals("url", userViewModel.pictureUrl);
         assertEquals("felix@email.de", userViewModel.email);
