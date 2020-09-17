@@ -9,8 +9,6 @@ import com.project.cuecards.viewModels.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -115,7 +113,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedRoomViewModel.data = expectedDataViewModel;
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.fullName = "Test Fullname";
-        userViewModel.pictureUrl = "test.url";
+        userViewModel.userImage = "test.url";
         expectedRoomViewModel.user.add(userViewModel);
         loggedInUser.setFullName("Test Fullname").setPictureUrl("test.url");
 

@@ -2,13 +2,11 @@ package com.project.cuecards.viewModels;
 
 public class AuthenticationResponse {
 
-    private final String jwt;
+    public final String jwt;
+    public final UserViewModel userData;
 
-    public AuthenticationResponse(String jwt) {
+    public AuthenticationResponse(String jwt, UserViewModel userData) {
         this.jwt = jwt;
-    }
-
-    public String getJwt() {
-        return jwt;
+        this.userData = userData;
     }
 }

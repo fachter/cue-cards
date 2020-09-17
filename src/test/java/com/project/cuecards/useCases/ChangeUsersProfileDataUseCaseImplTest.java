@@ -44,7 +44,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         userViewModel.username = "new^Username";
         userViewModel.fullName = "newName";
         userViewModel.email = "new@email";
-        userViewModel.pictureUrl = "newUrl";
+        userViewModel.userImage = "newUrl";
 
         useCase.change(userViewModel, loggedInUser);
 
@@ -64,7 +64,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         userViewModel.username = "oldUsername";
         userViewModel.fullName = "newName";
         userViewModel.email = "old@email";
-        userViewModel.pictureUrl = "newUrl";
+        userViewModel.userImage = "newUrl";
         List<User> users = new ArrayList<>();
         users.add(user);
         when(userGatewayMock.getUserByUsernameOrEmail("oldUsername", "old@email")).thenReturn(users);
@@ -87,7 +87,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         userViewModel.username = "newUsername";
         userViewModel.fullName = "newName";
         userViewModel.email = "new@email";
-        userViewModel.pictureUrl = "newUrl";
+        userViewModel.userImage = "newUrl";
         ArrayList<User> users = new ArrayList<>();
         users.add(new User().setUsername("newUsername"));
         when(userGatewayMock.getUserByUsernameOrEmail("newUsername", "new@email")).thenReturn(users);

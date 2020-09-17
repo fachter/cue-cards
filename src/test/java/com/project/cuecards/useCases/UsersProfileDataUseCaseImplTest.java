@@ -3,6 +3,7 @@ package com.project.cuecards.useCases;
 import com.project.cuecards.boundaries.UsersProfileDataUseCase;
 import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidDataException;
+import com.project.cuecards.services.UsersProfileDataServiceImpl;
 import com.project.cuecards.viewModels.UserViewModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ class UsersProfileDataUseCaseImplTest {
     private UsersProfileDataUseCase useCase;
     @BeforeEach
     void setUp() {
-        useCase = new UsersProfileDataUseCaseImpl();
+        useCase = new UsersProfileDataUseCaseImpl(new UsersProfileDataServiceImpl());
     }
 
     @Test
@@ -32,7 +33,7 @@ class UsersProfileDataUseCaseImplTest {
 
         assertEquals("username", userViewModel.username);
         assertEquals("Felix", userViewModel.fullName);
-        assertEquals("url", userViewModel.pictureUrl);
+        assertEquals("url", userViewModel.userImage);
         assertEquals("felix@email.de", userViewModel.email);
     }
 }

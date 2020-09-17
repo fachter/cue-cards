@@ -34,7 +34,7 @@ public class ChangeUsersProfileDataUseCaseImpl implements ChangeUsersProfileData
             }
             userById.setFullName(userViewModel.fullName);
             userById.setEmail(userViewModel.email);
-            userById.setPictureUrl(userViewModel.pictureUrl);
+            userById.setPictureUrl(userViewModel.userImage);
             userGateway.saveUser(userById);
         } catch (UserDoesNotExistException e) {
             e.printStackTrace();
