@@ -8,6 +8,7 @@ import com.project.cuecards.exceptions.UserDoesNotExistException;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
+import com.project.cuecards.services.UsersHomeDataServiceImpl;
 import com.project.cuecards.viewModels.AnswerViewModel;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
@@ -34,20 +35,22 @@ class GetUsersHomeDataUseCaseTest {
     private final String validUsername = "validUsername";
     private final String invalidUsername = "invalidUsername";
     private GetUsersHomeData useCase;
-    @Mock private UserGateway userGatewayMock;
-    @Mock private FolderGateway folderGatewayMock;
+    @Mock
+    private UserGateway userGatewayMock;
+    @Mock
+    private FolderGateway folderGatewayMock;
     private final User validUser = new User();
     private final DataViewModel expectedViewModel = new DataViewModel();
     private final ArrayList<Folder> expectedFolders = new ArrayList<>();
     private final String existingUid = "existingUid";
-    private final LocalDateTime lastModifiedDate = LocalDateTime.of(2020,1,2,3,4,5,6);
+    private final LocalDateTime lastModifiedDate = LocalDateTime.of(2020, 1, 2, 3, 4, 5, 6);
 
     @BeforeEach
     void setUp() {
         validUser.setUsername(validUsername);
         validUser.setLastModifiedDateTime(lastModifiedDate);
         useCase = new GetUsersHomeDataUseCase(userGatewayMock,
-                folderGatewayMock, new PrepareDataViewModelServiceImpl());
+                new UsersHomeDataServiceImpl(folderGatewayMock, new PrepareDataViewModelServiceImpl()));
         expectedViewModel.folders = new ArrayList<>();
         expectedViewModel.lastModified = lastModifiedDate;
     }

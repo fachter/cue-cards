@@ -7,9 +7,19 @@
 <body>
 <h1>CueCards Räume</h1>
 
-<div>Mein Raum</div>
-<div th:each="room: ${rooms}">
-  <p th:text="${room.name}"></p>
-</div>
+<table>
+  <tbody>
+  <tr th:each="room: ${rooms}">
+    <td th:text="${room.id}" th:attr="onclick='upload(' + ${room} + ')'"></td>
+    <td th:text="${room.name}"></td>
+    <td>
+      <form method="POST" th:action="@{/room/show(room=${room})}">
+        <button type="submit" name="submit" value="value" class="link-button">This is a link that sends a POST request
+        </button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
 </body>
 </html>

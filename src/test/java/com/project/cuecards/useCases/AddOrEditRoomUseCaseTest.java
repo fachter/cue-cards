@@ -146,4 +146,32 @@ class AddOrEditRoomUseCaseTest {
         assertEquals(room, actualFolders.get(0).getRoom());
         assertEquals(lastModified, room.getLastModifiedDateTime());
     }
+
+    @Test
+    public void givenSubfolderDoesNotExistAnymore_thenDeleteIt() throws Exception {
+        Room room = (Room) new Room().setName("Raum").setPictureNumber(3).setId(123L);
+        Folder folder = (Folder) new Folder()
+                .setName("RootFolder").setRoom(room).setId(1L).setUid("rootUid");
+        Folder subFolder = (Folder) new Folder()
+                .setName("SubFolder").setRootFolder(folder).setId(2L).setUid("subUid");
+        folder.getSubFolders().add(subFolder);
+        room.getFolders().add(folder);
+        when(roomGatewayMock.getById(123L)).thenReturn(room);
+        RoomViewModel viewModel = new RoomViewModel();
+        viewModel.id = 123L;
+        viewModel.name = "Raum";
+        viewModel.data = new DataViewModel();
+        viewModel.data.lastModified = LocalDateTime.of(2020,1,2,3,4,5,6);
+        FolderViewModel folderViewModel = new FolderViewModel();
+        folderViewModel.id = "rootUid";
+        folderViewModel.name = "RootFolder";
+        viewModel.data.folders.add(folderViewModel);
+
+        roomUseCase.add(viewModel, loggedInUser);
+
+        verify(folderGatewayMock, times(1)).removeList(folderCaptor.capture());
+        List<Folder> foldersToDelete = folderCaptor.getValue();
+        assertEquals(1, foldersToDelete.size());
+        assertEquals(subFolder, foldersToDelete.get(0));
+    }
 }

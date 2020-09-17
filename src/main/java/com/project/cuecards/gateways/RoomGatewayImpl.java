@@ -36,7 +36,11 @@ public class RoomGatewayImpl implements RoomGateway {
 
     @Override
     public List<Room> getAllAvailableForUser(User user) {
-        return  roomRepository.findAllByAllowedUsersContains(user);
+        try {
+            return  roomRepository.findAllByAllowedUsersContains(user);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override

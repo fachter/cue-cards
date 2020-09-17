@@ -24,6 +24,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     private final AnswerGateway answerGateway;
     private List<Folder> foldersToPersist;
     private List<Folder> existingFolders;
+    private List<Folder> foldersToRemove;
     private List<CueCard> cardsToRemove;
     private List<Answer> answersToRemove;
     private User loggedInUser;
@@ -53,6 +54,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
 
     private void initEmptyLists() {
         foldersToPersist = new ArrayList<>();
+        foldersToRemove = new ArrayList<>();
         cardsToRemove = new ArrayList<>();
         answersToRemove = new ArrayList<>();
     }
@@ -66,15 +68,27 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
         }
     }
 
-    private void addSubFolders(ArrayList<FolderViewModel> folderViewModels, Folder rootFolder) {
-        ArrayList<Folder> subFolders = new ArrayList<>();
+    private void addSubFolders(List<FolderViewModel> folderViewModels, Folder rootFolder) {
+        List<Folder> subFolders = getSubFoldersForRootFolder(folderViewModels, rootFolder);
+        addAllSubFoldersToRemove(rootFolder.getSubFolders(), subFolders);
+        rootFolder.setSubFolders(subFolders);
+    }
+
+    private void addAllSubFoldersToRemove(List<Folder> existingSubFolders, List<Folder> subFolders) {
+        for (Folder existingSubFolder : existingSubFolders)
+            if (!subFolders.contains(existingSubFolder))
+                foldersToRemove.add(existingSubFolder);
+    }
+
+    private List<Folder> getSubFoldersForRootFolder(List<FolderViewModel> folderViewModels, Folder rootFolder) {
+        List<Folder> subFolders = new ArrayList<>();
         for (FolderViewModel folderViewModel : folderViewModels) {
             Folder folder = getFolderWithRoom(folderViewModel, rootFolder);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
             subFolders.add(folder);
         }
-        rootFolder.setSubFolders(subFolders);
+        return subFolders;
     }
 
     private Folder getFolderWithRoom(FolderViewModel folderViewModel, Folder rootFolder) {
@@ -196,7 +210,6 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     }
 
     private void removeFolders() throws InvalidArgumentException {
-        ArrayList<Folder> foldersToRemove = new ArrayList<>();
         for (Folder existingFolder : existingFolders) {
             if (!foldersToPersist.contains(existingFolder))
                 foldersToRemove.add(existingFolder);

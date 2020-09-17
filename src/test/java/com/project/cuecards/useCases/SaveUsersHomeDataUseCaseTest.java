@@ -11,10 +11,7 @@ import com.project.cuecards.gateways.CueCardGateway;
 import com.project.cuecards.gateways.FolderGateway;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.services.SaveDataViewModelServiceImpl;
-import com.project.cuecards.viewModels.AnswerViewModel;
-import com.project.cuecards.viewModels.CueCardViewModel;
-import com.project.cuecards.viewModels.DataViewModel;
-import com.project.cuecards.viewModels.FolderViewModel;
+import com.project.cuecards.viewModels.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +42,7 @@ public class SaveUsersHomeDataUseCaseTest {
     @Mock private UserGateway userGatewayMock;
     @Mock private CueCardGateway cueCardGatewayMock;
     @Mock private AnswerGateway answerGatewayMock;
-    @Captor private ArgumentCaptor<List<Folder>> captor;
+    @Captor private ArgumentCaptor<List<Folder>> folderCaptor;
     @Captor private ArgumentCaptor<List<CueCard>> cardCaptor;
     @Captor private ArgumentCaptor<List<Answer>> answerCaptor;
     private SaveUsersHomeData useCase;
@@ -129,10 +126,10 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
-        assertThat(captor.getValue()).usingRecursiveFieldByFieldElementComparator()
+        assertThat(folderCaptor.getValue()).usingRecursiveFieldByFieldElementComparator()
                 .isEqualTo(expectedFolders);
         verify(userGatewayMock, times(1)).saveUser(validUser);
         assertEquals(dateTime, validUser.getLastModifiedDateTime());
@@ -152,11 +149,11 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, null);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
         assertThat(actualFolders.get(1)).usingRecursiveComparison().isEqualTo(set);
-        assertThat(captor.getValue()).usingRecursiveFieldByFieldElementComparator()
+        assertThat(folderCaptor.getValue()).usingRecursiveFieldByFieldElementComparator()
                 .isEqualTo(expectedFolders);
     }
 
@@ -192,8 +189,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
         assertThat(actualFolders.get(1)).usingRecursiveComparison().isEqualTo(set);
     }
@@ -216,8 +213,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, null);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedRootFolder);
     }
@@ -240,8 +237,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, null);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedRootFolder);
     }
@@ -283,8 +280,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedSet);
     }
 
@@ -303,9 +300,9 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
 
-        List<Folder> actualFolders = captor.getValue();
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals("existingFolder", folder.getName());
         assertTrue(actualFolders.contains(folder));
     }
@@ -320,8 +317,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
     }
 
@@ -380,8 +377,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedF1);
     }
@@ -435,8 +432,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(expectedSet);
     }
@@ -490,8 +487,8 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).addList(captor.capture());
-        List<Folder> actualFolders = captor.getValue();
+        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals(1, actualFolders.size());
         assertThat(actualFolders.get(0)).usingRecursiveComparison().isEqualTo(folder);
         assertEquals("changed Folder" ,folder.getName());
@@ -515,8 +512,8 @@ public class SaveUsersHomeDataUseCaseTest {
         useCase.save(viewModel, validUsername);
 
         verify(folderGatewayMock,times(0)).addList(any());
-        verify(folderGatewayMock, times(1)).removeList(captor.capture());
-        assertEquals(folder, captor.getValue().get(0));
+        verify(folderGatewayMock, times(1)).removeList(folderCaptor.capture());
+        assertEquals(folder, folderCaptor.getValue().get(0));
     }
 
     @Test
@@ -646,5 +643,30 @@ public class SaveUsersHomeDataUseCaseTest {
         useCase.save(viewModel, validUsername);
 
         assertEquals(3, cueCard.getCardLevels().size());
+    }
+
+    @Test
+    public void givenSubfolderDoesNotExistAnymore_thenDeleteIt() throws Exception {
+        FolderViewModel folderViewModel = new FolderViewModel();
+        folderViewModel.id = "rootUid";
+        folderViewModel.name = "RootFolder";
+        viewModel.folders.add(folderViewModel);
+
+        Folder folder = (Folder) new Folder()
+                .setName("RootFolder").setRoom(null).setId(1L).setUid("rootUid");
+        Folder subFolder = (Folder) new Folder()
+                .setName("SubFolder").setRootFolder(folder).setId(2L).setUid("subUid");
+        folder.getSubFolders().add(subFolder);
+        List<Folder> folders = new ArrayList<>();
+        folders.add(folder);
+        when(userGatewayMock.getUserByUsername(validUsername)).thenReturn(validUser);
+        when(folderGatewayMock.getRootFoldersByUser(validUser)).thenReturn(folders);
+
+        useCase.save(viewModel, validUsername);
+
+        verify(folderGatewayMock, times(1)).removeList(folderCaptor.capture());
+        List<Folder> foldersToDelete = folderCaptor.getValue();
+        assertEquals(1, foldersToDelete.size());
+        assertEquals(subFolder, foldersToDelete.get(0));
     }
 }
