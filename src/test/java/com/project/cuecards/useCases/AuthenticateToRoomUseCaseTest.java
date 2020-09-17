@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +21,7 @@ class AuthenticateToRoomUseCaseTest {
 
     private AuthenticateToRoom authenticateToRoom;
     @Mock private RoomGateway roomGatewayMock;
-    private final User loggedInUser = new User().setFullName("Felix").setUsername("fachter").setPassword("password");
+    private final User loggedInUser = new User().setNickName("Felix").setUsername("fachter").setPassword("password");
 
     @BeforeEach
     void setUp() {

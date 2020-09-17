@@ -426,8 +426,8 @@ class GetUsersHomeDataUseCaseTest {
         Folder set = getNewSet(existingUid + 1);
         CueCard card = getNewCueCard(existingUid + 2);
         List<CardLevel> cardLevels = new ArrayList<>();
-        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
-        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setNickName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setNickName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
         cardLevels.add((CardLevel) new CardLevel().setUser(validUser).setCueCard(card).setUsersCardLevel(3).setId(123L));
         card.setCardLevels(cardLevels);
         set.getCueCards().add(card);
@@ -449,8 +449,8 @@ class GetUsersHomeDataUseCaseTest {
         Folder set = getNewSet(existingUid + 1);
         CueCard card = getNewCueCard(existingUid + 2);
         List<CardLevel> cardLevels = new ArrayList<>();
-        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
-        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setFullName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setNickName("Test 1")).setUsersCardLevel(1).setCueCard(card).setId(123L));
+        cardLevels.add((CardLevel) new CardLevel().setUser(new User().setNickName("Test 2")).setUsersCardLevel(2).setCueCard(card).setId(123L));
         card.setCardLevels(cardLevels);
         set.getCueCards().add(card);
         expectedFolders.add(set);

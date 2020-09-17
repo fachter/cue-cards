@@ -588,9 +588,9 @@ public class SaveUsersHomeDataUseCaseTest {
                 .setQuestion("Test Frage")
                 .setSet(set)
                 .setUid("TestCard");
-        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("First Test")).setUsersCardLevel(3).setId(432L);
+        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setNickName("First Test")).setUsersCardLevel(3).setId(432L);
         CardLevel cardLevel2 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(validUser).setUsersCardLevel(3).setId(123L);
-        CardLevel cardLevel3 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("SecondTest")).setUsersCardLevel(3).setId(532L);
+        CardLevel cardLevel3 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setNickName("SecondTest")).setUsersCardLevel(3).setId(532L);
         cueCard.getCardLevels().add(cardLevel1);
         cueCard.getCardLevels().add(cardLevel2);
         cueCard.getCardLevels().add(cardLevel3);
@@ -624,8 +624,8 @@ public class SaveUsersHomeDataUseCaseTest {
                 .setQuestion("Test Frage")
                 .setSet(set)
                 .setUid("TestCard");
-        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("First Test")).setUsersCardLevel(3).setId(432L);
-        CardLevel cardLevel2 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setFullName("SecondTest")).setUsersCardLevel(3).setId(532L);
+        CardLevel cardLevel1 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setNickName("First Test")).setUsersCardLevel(3).setId(432L);
+        CardLevel cardLevel2 = (CardLevel) new CardLevel().setCueCard(cueCard).setUser(new User().setNickName("SecondTest")).setUsersCardLevel(3).setId(532L);
         cueCard.getCardLevels().add(cardLevel1);
         cueCard.getCardLevels().add(cardLevel2);
         set.getCueCards().add(cueCard);

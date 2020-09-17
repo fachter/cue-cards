@@ -34,7 +34,7 @@ class AddOrEditRoomUseCaseTest {
     @Mock private CueCardGateway cueCardGatewayMock;
     @Mock private AnswerGateway answerGatewayMock;
     private AddOrEditRoom roomUseCase;
-    private final User loggedInUser = new User().setFullName("Test").setUsername("test").setPassword("test");
+    private final User loggedInUser = new User().setNickName("Test").setUsername("test").setPassword("test");
     @Captor private ArgumentCaptor<Room> roomCaptor;
     @Captor private ArgumentCaptor<List<Folder>> folderCaptor;
 

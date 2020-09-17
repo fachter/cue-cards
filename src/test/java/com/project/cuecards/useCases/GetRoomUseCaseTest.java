@@ -21,7 +21,7 @@ class GetRoomUseCaseTest {
 
     private GetRoom getRoom;
     @Mock private RoomGateway roomGatewayMock;
-    private final User loggedInUser = new User().setUsername("fachter").setFullName("Felix");
+    private final User loggedInUser = new User().setUsername("fachter").setNickName("Felix");
 
     @BeforeEach
     void setUp() {

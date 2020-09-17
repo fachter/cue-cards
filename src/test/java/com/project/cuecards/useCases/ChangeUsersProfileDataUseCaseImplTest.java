@@ -5,6 +5,9 @@ import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.services.AuthenticateService;
+import com.project.cuecards.viewModels.AuthenticationResponse;
+import com.project.cuecards.viewModels.ChangeUserViewModel;
 import com.project.cuecards.viewModels.UserViewModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,44 +27,53 @@ import static org.mockito.Mockito.*;
 class ChangeUsersProfileDataUseCaseImplTest {
 
     @Mock private UserGateway userGatewayMock;
+    @Mock private AuthenticateService authenticateServiceMock;
+    @Mock private PasswordEncoder passwordEncoderMock;
     private ChangeUsersProfileDataUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new ChangeUsersProfileDataUseCaseImpl(userGatewayMock);
+        useCase = new ChangeUsersProfileDataUseCaseImpl(userGatewayMock, authenticateServiceMock, passwordEncoderMock);
     }
 
     @Test
     public void givenUserIsNull_thenThrowException() throws Exception {
-        Assertions.assertThrows(InvalidDataException.class, () -> useCase.change(new UserViewModel(), null));
+        Assertions.assertThrows(InvalidDataException.class, () -> useCase.change(new ChangeUserViewModel(), null));
     }
 
     @Test
     public void givenUser_thenFindUserFromDbAndOverwriteValuesAndSave() throws Exception {
-        User user = (User) new User().setFullName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl")
+                .setUsername("oldUsername").setPassword("oldPassword").setId(123L);
         when(userGatewayMock.getUserById(123L)).thenReturn(user);
+        AuthenticationResponse response = new AuthenticationResponse("token", new UserViewModel());
+        when(authenticateServiceMock.authenticate(any())).thenReturn(response);
+        when(passwordEncoderMock.encode("newPassword")).thenReturn("encodedPassword");
         User loggedInUser = (User) new User().setId(123L);
-        UserViewModel userViewModel = new UserViewModel();
-        userViewModel.username = "new^Username";
+        ChangeUserViewModel userViewModel = new ChangeUserViewModel();
+        userViewModel.username = "newUsername";
+        userViewModel.password = "newPassword";
         userViewModel.nickName = "newName";
         userViewModel.email = "new@email";
         userViewModel.userImage = "newUrl";
 
-        useCase.change(userViewModel, loggedInUser);
+        AuthenticationResponse authenticationResponse = useCase.change(userViewModel, loggedInUser);
 
         verify(userGatewayMock, times(1)).saveUser(user);
-        assertEquals("newName", user.getFullName());
+        assertEquals("newName", user.getNickName());
         assertEquals("newUrl", user.getPictureUrl());
         assertEquals("new@email", user.getEmail());
-        assertEquals("oldUsername", user.getUsername());
+        assertEquals("newUsername", user.getUsername());
+        assertEquals("encodedPassword", user.getPassword());
+        assertEquals(response, authenticationResponse);
     }
 
     @Test
     public void givenUserWithoutOverwrittenEmailOrUsername_thenDoNotThrowException() throws Exception {
-        User user = (User) new User().setFullName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
         when(userGatewayMock.getUserById(123L)).thenReturn(user);
         User loggedInUser = (User) new User().setId(123L);
-        UserViewModel userViewModel = new UserViewModel();
+        ChangeUserViewModel userViewModel = new ChangeUserViewModel();
         userViewModel.username = "oldUsername";
         userViewModel.nickName = "newName";
         userViewModel.email = "old@email";
@@ -72,7 +85,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         useCase.change(userViewModel, loggedInUser);
 
         verify(userGatewayMock, times(1)).saveUser(user);
-        assertEquals("newName", user.getFullName());
+        assertEquals("newName", user.getNickName());
         assertEquals("newUrl", user.getPictureUrl());
         assertEquals("old@email", user.getEmail());
         assertEquals("oldUsername", user.getUsername());
@@ -80,10 +93,10 @@ class ChangeUsersProfileDataUseCaseImplTest {
 
     @Test
     public void givenUsernameAlreadyExists_thenThrowExeption() throws Exception {
-        User user = (User) new User().setFullName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
         when(userGatewayMock.getUserById(123L)).thenReturn(user);
         User loggedInUser = (User) new User().setId(123L);
-        UserViewModel userViewModel = new UserViewModel();
+        ChangeUserViewModel userViewModel = new ChangeUserViewModel();
         userViewModel.username = "newUsername";
         userViewModel.nickName = "newName";
         userViewModel.email = "new@email";
@@ -93,5 +106,22 @@ class ChangeUsersProfileDataUseCaseImplTest {
         when(userGatewayMock.getUserByUsernameOrEmail("newUsername", "new@email")).thenReturn(users);
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () -> useCase.change(userViewModel, loggedInUser));
+    }
+
+    @Test
+    public void givenValuesAreNull_thenDoNotOverwriteThem() throws Exception {
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl")
+                .setUsername("oldUsername").setPassword("oldPassword").setId(123L);
+        when(userGatewayMock.getUserById(123L)).thenReturn(user);
+        User loggedInUser = (User) new User().setId(123L);
+
+        useCase.change(new ChangeUserViewModel(), loggedInUser);
+
+        verify(userGatewayMock, times(1)).saveUser(user);
+        assertEquals("oldName", user.getNickName());
+        assertEquals("old@email", user.getEmail());
+        assertEquals("oldUrl", user.getPictureUrl());
+        assertEquals("oldUsername", user.getUsername());
+        assertEquals("oldPassword", user.getPassword());
     }
 }

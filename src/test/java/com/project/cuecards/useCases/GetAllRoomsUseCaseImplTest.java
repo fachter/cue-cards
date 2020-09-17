@@ -27,7 +27,7 @@ class GetAllRoomsUseCaseImplTest {
     private GetAllRoomsUseCase getAllRoomsUseCase;
     @Mock private RoomGateway roomGatewayMock;
     private final User loggedInUser = (User) new User()
-            .setUsername("username").setPassword("password").setFullName("Test User").setId(999L);
+            .setUsername("username").setPassword("password").setNickName("Test User").setId(999L);
 
     @BeforeEach
     void setUp() {
@@ -69,7 +69,7 @@ class GetAllRoomsUseCaseImplTest {
         set.setRootFolder(folder);
         CueCard cueCard = (CueCard) new CueCard().setQuestion("Frage").setSet(set).setId(52L).setUid("testUidCard");
         CardLevel cardLevelFromOtherUser = (CardLevel) new CardLevel()
-                .setUser((User) new User().setFullName("Test").setId(88L))
+                .setUser((User) new User().setNickName("Test").setId(88L))
                 .setCueCard(cueCard)
                 .setUsersCardLevel(5)
                 .setId(57L);
@@ -115,7 +115,7 @@ class GetAllRoomsUseCaseImplTest {
         userViewModel.nickName = "Test Fullname";
         userViewModel.userImage = "test.url";
         expectedRoomViewModel.user.add(userViewModel);
-        loggedInUser.setFullName("Test Fullname").setPictureUrl("test.url");
+        loggedInUser.setNickName("Test Fullname").setPictureUrl("test.url");
 
         List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
@@ -125,14 +125,14 @@ class GetAllRoomsUseCaseImplTest {
     @Test
     public void givenMultipleRoomsWithAllowedUsers_thenShowThemInViewModel() throws Exception {
         Room roomWithUsers = (Room) new Room().setName("TestRoom").setPictureNumber(3).setId(123L);
-        User user1 = (User) new User().setFullName("User 1").setId(312L);
-        User user2 = (User) new User().setFullName("User 2").setId(352L);
-        User user3 = (User) new User().setFullName("User 3").setId(398L);
+        User user1 = (User) new User().setNickName("User 1").setId(312L);
+        User user2 = (User) new User().setNickName("User 2").setId(352L);
+        User user3 = (User) new User().setNickName("User 3").setId(398L);
         roomWithUsers.setAllowedUsers(Set.of(user1, user2, user3, loggedInUser));
         Room roomWithDifferentUsers = (Room) new Room().setName("Different Room").setPassword("password").setPictureNumber(2).setId(321L);
-        User user4 = (User) new User().setFullName("User 4").setId(512L);
-        User user5 = (User) new User().setFullName("User 5").setId(513L);
-        User user6 = (User) new User().setFullName("User 6").setId(514L);
+        User user4 = (User) new User().setNickName("User 4").setId(512L);
+        User user5 = (User) new User().setNickName("User 5").setId(513L);
+        User user6 = (User) new User().setNickName("User 6").setId(514L);
         roomWithDifferentUsers.setAllowedUsers(Set.of(user4, user5, user6));
         List<Room> rooms = new ArrayList<>();
         rooms.add(roomWithUsers);

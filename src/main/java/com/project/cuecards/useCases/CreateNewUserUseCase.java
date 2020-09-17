@@ -48,7 +48,7 @@ public class CreateNewUserUseCase implements CreateNewUser {
         user.setUsername(registerRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEmail(registerRequest.getEmail());
-        user.setFullName(getFullName(registerRequest));
+        user.setNickName(getFullName(registerRequest));
         user.getRoles().add(getRole());
         return user;
     }

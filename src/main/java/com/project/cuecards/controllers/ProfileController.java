@@ -5,6 +5,8 @@ import com.project.cuecards.boundaries.UsersProfileDataUseCase;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
 import com.project.cuecards.services.LoggedInUserService;
+import com.project.cuecards.viewModels.AuthenticationResponse;
+import com.project.cuecards.viewModels.ChangeUserViewModel;
 import com.project.cuecards.viewModels.UserViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,18 +36,19 @@ public class ProfileController {
         } catch (InvalidDataException e) {
             return new ResponseEntity<>("Invalid User", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(userViewModel,HttpStatus.OK);
+        return new ResponseEntity<>(userViewModel, HttpStatus.OK);
     }
 
     @PostMapping("/user/change-profile-data")
-    public ResponseEntity<?> changeUsersProfileData(@RequestBody UserViewModel userViewModel) {
+    public ResponseEntity<?> changeUsersProfileData(@RequestBody ChangeUserViewModel userViewModel) {
         try {
-            changeProfileDataUseCase.change(userViewModel, LoggedInUserService.getLoggedInUser());
+            return new ResponseEntity<>(
+                    changeProfileDataUseCase.change(userViewModel, LoggedInUserService.getLoggedInUser()),
+                    HttpStatus.OK);
         } catch (InvalidDataException e) {
             return new ResponseEntity<>("Invalid User", HttpStatus.BAD_REQUEST);
         } catch (UserAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

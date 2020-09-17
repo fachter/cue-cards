@@ -3,9 +3,10 @@ package com.project.cuecards.boundaries;
 import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
-import com.project.cuecards.viewModels.UserViewModel;
+import com.project.cuecards.viewModels.AuthenticationResponse;
+import com.project.cuecards.viewModels.ChangeUserViewModel;
 
 public interface ChangeUsersProfileDataUseCase {
 
-    void change(UserViewModel userViewModel, User loggedInUser) throws InvalidDataException, UserAlreadyExistsException;
+    AuthenticationResponse change(ChangeUserViewModel userViewModel, User loggedInUser) throws InvalidDataException, UserAlreadyExistsException;
 }

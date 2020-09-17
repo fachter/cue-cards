@@ -17,7 +17,7 @@ public class UsersProfileDataServiceImpl implements UsersProfileDataService {
     private UserViewModel getUserViewModel(User loggedInUser) {
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.username = loggedInUser.getUsername();
-        userViewModel.nickName = loggedInUser.getFullName();
+        userViewModel.nickName = loggedInUser.getNickName();
         userViewModel.userImage = loggedInUser.getPictureUrl();
         userViewModel.email = loggedInUser.getEmail();
         return userViewModel;

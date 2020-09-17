@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,7 +91,7 @@ class CreateNewUserUseCaseTest {
         expectedUser.setUsername("newUser");
         expectedUser.setPassword(encodedPassword);
         expectedUser.setEmail("email");
-        expectedUser.setFullName("New User");
+        expectedUser.setNickName("New User");
         Role role = new Role();
         role.setName("USER");
         role.setDescription("User Role");
@@ -117,7 +116,7 @@ class CreateNewUserUseCaseTest {
         expectedUser.setUsername("newUser");
         expectedUser.setPassword(encodedPassword);
         expectedUser.setEmail("email");
-        expectedUser.setFullName("newUser");
+        expectedUser.setNickName("newUser");
         Role role = new Role();
         role.setName("USER");
         role.setDescription("User Role");

@@ -33,7 +33,7 @@ public class User extends BaseEntity implements UserDetails {
     @Email
     private String email;
 
-    private String fullName;
+    private String nickName;
     private String pictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -118,12 +118,12 @@ public class User extends BaseEntity implements UserDetails {
         return this;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getNickName() {
+        return nickName;
     }
 
-    public User setFullName(String fullName) {
-        this.fullName = fullName;
+    public User setNickName(String fullName) {
+        this.nickName = fullName;
         return this;
     }
 

@@ -26,7 +26,7 @@ class UsersProfileDataUseCaseImplTest {
 
     @Test
     public void givenUser_thenReturnFilledViewModel() throws Exception {
-        User user = (User) new User().setFullName("Felix").setEmail("felix@email.de").setPictureUrl("url")
+        User user = (User) new User().setNickName("Felix").setEmail("felix@email.de").setPictureUrl("url")
                 .setUsername("username").setId(3L);
 
         UserViewModel userViewModel = useCase.get(user);
