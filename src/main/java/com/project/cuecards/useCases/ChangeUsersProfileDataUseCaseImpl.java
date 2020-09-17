@@ -32,7 +32,7 @@ public class ChangeUsersProfileDataUseCaseImpl implements ChangeUsersProfileData
                 if (user != userById)
                     throw new UserAlreadyExistsException();
             }
-            userById.setFullName(userViewModel.fullName);
+            userById.setFullName(userViewModel.nickName);
             userById.setEmail(userViewModel.email);
             userById.setPictureUrl(userViewModel.userImage);
             userGateway.saveUser(userById);

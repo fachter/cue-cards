@@ -65,7 +65,7 @@ public class GetUserRoomsServiceImpl implements GetUserRoomsService {
         List<UserViewModel> allowedUsers = new ArrayList<>();
         for (User allowedUser : room.getAllowedUsers()) {
             UserViewModel allowedUserViewModel = new UserViewModel();
-            allowedUserViewModel.fullName = allowedUser.getFullName();
+            allowedUserViewModel.nickName = allowedUser.getFullName();
             allowedUserViewModel.userImage = allowedUser.getPictureUrl();
             allowedUsers.add(allowedUserViewModel);
         }

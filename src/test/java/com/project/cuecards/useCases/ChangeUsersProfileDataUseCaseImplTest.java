@@ -42,7 +42,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         User loggedInUser = (User) new User().setId(123L);
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.username = "new^Username";
-        userViewModel.fullName = "newName";
+        userViewModel.nickName = "newName";
         userViewModel.email = "new@email";
         userViewModel.userImage = "newUrl";
 
@@ -62,7 +62,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         User loggedInUser = (User) new User().setId(123L);
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.username = "oldUsername";
-        userViewModel.fullName = "newName";
+        userViewModel.nickName = "newName";
         userViewModel.email = "old@email";
         userViewModel.userImage = "newUrl";
         List<User> users = new ArrayList<>();
@@ -85,7 +85,7 @@ class ChangeUsersProfileDataUseCaseImplTest {
         User loggedInUser = (User) new User().setId(123L);
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.username = "newUsername";
-        userViewModel.fullName = "newName";
+        userViewModel.nickName = "newName";
         userViewModel.email = "new@email";
         userViewModel.userImage = "newUrl";
         ArrayList<User> users = new ArrayList<>();

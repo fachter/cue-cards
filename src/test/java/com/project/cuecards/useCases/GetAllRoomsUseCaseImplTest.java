@@ -112,7 +112,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
         UserViewModel userViewModel = new UserViewModel();
-        userViewModel.fullName = "Test Fullname";
+        userViewModel.nickName = "Test Fullname";
         userViewModel.userImage = "test.url";
         expectedRoomViewModel.user.add(userViewModel);
         loggedInUser.setFullName("Test Fullname").setPictureUrl("test.url");
@@ -144,6 +144,6 @@ class GetAllRoomsUseCaseImplTest {
         assertEquals(2, roomViewModels.size());
         assertEquals(4, roomViewModels.get(0).user.size());
         assertEquals(3, roomViewModels.get(1).user.size());
-        assertNotNull(roomViewModels.get(0).user.get(0).fullName);
+        assertNotNull(roomViewModels.get(0).user.get(0).nickName);
     }
 }

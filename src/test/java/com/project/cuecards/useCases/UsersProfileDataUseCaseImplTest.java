@@ -32,7 +32,7 @@ class UsersProfileDataUseCaseImplTest {
         UserViewModel userViewModel = useCase.get(user);
 
         assertEquals("username", userViewModel.username);
-        assertEquals("Felix", userViewModel.fullName);
+        assertEquals("Felix", userViewModel.nickName);
         assertEquals("url", userViewModel.userImage);
         assertEquals("felix@email.de", userViewModel.email);
     }
