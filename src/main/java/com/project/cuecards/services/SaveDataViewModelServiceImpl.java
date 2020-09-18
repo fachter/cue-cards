@@ -200,7 +200,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     private void persistToDb() throws InvalidDataException {
         try {
             if (foldersToPersist.size() > 0)
-                folderGateway.addList(foldersToPersist);
+                folderGateway.saveList(foldersToPersist);
             removeFolders();
             removeCueCards();
             removeAnswers();

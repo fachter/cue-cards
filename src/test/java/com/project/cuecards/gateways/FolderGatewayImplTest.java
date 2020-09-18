@@ -57,7 +57,7 @@ class FolderGatewayImplTest {
     public void addList_givenThrowsException_thenThrowInvalidArgumentException() throws Exception {
         doThrow(new IllegalArgumentException()).when(folderRepositoryMock).saveAll(any());
 
-        Assertions.assertThrows(InvalidArgumentException.class, () -> folderGateway.addList(null));
+        Assertions.assertThrows(InvalidArgumentException.class, () -> folderGateway.saveList(null));
     }
 
     @Test
@@ -75,7 +75,7 @@ class FolderGatewayImplTest {
         folders.add(folder2);
         folders.add(folder3);
 
-        folderGateway.addList(folders);
+        folderGateway.saveList(folders);
 
         verify(folderRepositoryMock, times(1)).saveAll(folders);
     }

@@ -6,7 +6,6 @@ import com.project.cuecards.exceptions.EntityNotFoundException;
 import com.project.cuecards.exceptions.InvalidArgumentException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,7 +15,7 @@ public interface FolderGateway {
 
     void add(Folder folder) throws InvalidArgumentException;
 
-    void addList(List<Folder> folder) throws InvalidArgumentException;
+    void saveList(List<Folder> folder) throws InvalidArgumentException;
 
     Folder getFolderById(long rootFolderId) throws EntityNotFoundException;
 

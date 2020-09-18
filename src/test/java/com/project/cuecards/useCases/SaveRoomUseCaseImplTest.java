@@ -137,7 +137,7 @@ class SaveRoomUseCaseImplTest {
 
         roomUseCase.save(viewModel, loggedInUser);
 
-        verify(folderGatewayMock, times(1)).addList(folderCaptor.capture());
+        verify(folderGatewayMock, times(1)).saveList(folderCaptor.capture());
         List<Folder> actualFolders = folderCaptor.getValue();
         assertEquals("Folder", actualFolders.get(0).getName());
         assertEquals("testUidFolder", actualFolders.get(0).getUid());
@@ -173,5 +173,10 @@ class SaveRoomUseCaseImplTest {
         List<Folder> foldersToDelete = folderCaptor.getValue();
         assertEquals(1, foldersToDelete.size());
         assertEquals(subFolder, foldersToDelete.get(0));
+        verify(folderGatewayMock, times(1)).saveList(folderCaptor.capture());
+        List<Folder> foldersToPersist = folderCaptor.getValue();
+        assertEquals(1, foldersToPersist.size());
+        assertEquals(folder, foldersToPersist.get(0));
+        assertEquals(0, folder.getSubFolders().size());
     }
 }

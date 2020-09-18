@@ -36,7 +36,7 @@ public class FolderGatewayImpl implements FolderGateway {
     }
 
     @Override
-    public void addList(List<Folder> folders) throws InvalidArgumentException {
+    public void saveList(List<Folder> folders) throws InvalidArgumentException {
         try {
             folderRepository.saveAll(folders);
         } catch (Exception e) {
