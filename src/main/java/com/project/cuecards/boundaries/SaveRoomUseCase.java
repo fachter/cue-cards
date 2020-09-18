@@ -5,7 +5,7 @@ import com.project.cuecards.exceptions.InvalidArgumentException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.viewModels.RoomViewModel;
 
-public interface AddOrEditRoom {
+public interface SaveRoomUseCase {
 
-    void add(RoomViewModel roomViewModel, User loggedInUser) throws InvalidArgumentException, InvalidDataException;
+    void save(RoomViewModel roomViewModel, User loggedInUser) throws InvalidArgumentException, InvalidDataException;
 }

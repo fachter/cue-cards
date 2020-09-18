@@ -18,18 +18,18 @@ import java.util.List;
 public class RoomController {
 
     private final GetAllRoomsUseCase getAllRoomsUseCase;
-    private final AddOrEditRoom addOrEditRoom;
+    private final SaveRoomUseCase saveRoomUseCase;
     private final AuthenticateToRoom authenticateToRoom;
     private final GetRoom getRoom;
     private final LeaveRoomUseCase leaveRoomUseCase;
 
     public RoomController(GetAllRoomsUseCase getAllRoomsUseCase,
-                          AddOrEditRoom addOrEditRoom,
+                          SaveRoomUseCase saveRoomUseCase,
                           AuthenticateToRoom authenticateToRoom,
                           GetRoom getRoom,
                           LeaveRoomUseCase leaveRoomUseCase) {
         this.getAllRoomsUseCase = getAllRoomsUseCase;
-        this.addOrEditRoom = addOrEditRoom;
+        this.saveRoomUseCase = saveRoomUseCase;
         this.authenticateToRoom = authenticateToRoom;
         this.getRoom = getRoom;
         this.leaveRoomUseCase = leaveRoomUseCase;
@@ -54,7 +54,7 @@ public class RoomController {
     @PostMapping("/room")
     public ResponseEntity<?> addRoom(@RequestBody RoomViewModel roomViewModel) {
         try {
-            addOrEditRoom.add(roomViewModel, LoggedInUserService.getLoggedInUser());
+            saveRoomUseCase.save(roomViewModel, LoggedInUserService.getLoggedInUser());
         } catch (InvalidArgumentException | InvalidDataException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

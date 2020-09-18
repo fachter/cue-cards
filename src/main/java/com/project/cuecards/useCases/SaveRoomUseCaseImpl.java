@@ -1,6 +1,6 @@
 package com.project.cuecards.useCases;
 
-import com.project.cuecards.boundaries.AddOrEditRoom;
+import com.project.cuecards.boundaries.SaveRoomUseCase;
 import com.project.cuecards.entities.Room;
 import com.project.cuecards.entities.User;
 import com.project.cuecards.exceptions.InvalidArgumentException;
@@ -13,21 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AddOrEditRoomUseCase implements AddOrEditRoom {
+public class SaveRoomUseCaseImpl implements SaveRoomUseCase {
 
     private final RoomGateway roomGateway;
     private final SaveDataViewModelServiceImpl saveDataViewModelService;
     private User loggedInUser;
 
     @Autowired
-    public AddOrEditRoomUseCase(RoomGateway roomGateway,
-                                SaveDataViewModelServiceImpl saveDataViewModelService) {
+    public SaveRoomUseCaseImpl(RoomGateway roomGateway,
+                               SaveDataViewModelServiceImpl saveDataViewModelService) {
         this.roomGateway = roomGateway;
         this.saveDataViewModelService = saveDataViewModelService;
     }
 
     @Override
-    public void add(RoomViewModel roomViewModel, User loggedInUser) throws InvalidArgumentException, InvalidDataException {
+    public void save(RoomViewModel roomViewModel, User loggedInUser) throws InvalidArgumentException, InvalidDataException {
         if (roomViewModel == null || loggedInUser == null)
             throw new InvalidArgumentException();
         this.loggedInUser = loggedInUser;
