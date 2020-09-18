@@ -537,9 +537,7 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(cueCardGatewayMock, times(1)).removeList(cardCaptor.capture());
-        List<CueCard> cards = cardCaptor.getValue();
-        assertEquals(cueCard, cards.get(0));
+        assertEquals(0, set.getCueCards().size());
     }
 
     @Test
@@ -571,9 +569,11 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(answerGatewayMock, times(1)).removeList(answerCaptor.capture());
-        List<Answer> answers = answerCaptor.getValue();
-        assertEquals(answer, answers.get(0));
+        verify(folderGatewayMock, times(1)).saveList(folderCaptor.capture());
+        List<Folder> foldersToPersist = folderCaptor.getValue();
+        assertEquals(1, foldersToPersist.size());
+        assertEquals(set, foldersToPersist.get(0));
+        assertEquals(0, set.getCueCards().get(0).getAnswers().size());
     }
 
     @Test
@@ -664,9 +664,7 @@ public class SaveUsersHomeDataUseCaseTest {
 
         useCase.save(viewModel, validUsername);
 
-        verify(folderGatewayMock, times(1)).removeList(folderCaptor.capture());
-        List<Folder> foldersToDelete = folderCaptor.getValue();
-        assertEquals(1, foldersToDelete.size());
-        assertEquals(subFolder, foldersToDelete.get(0));
+        verify(folderGatewayMock, times(1)).saveList(folderCaptor.capture());
+        assertEquals(0, folder.getSubFolders().size());
     }
 }

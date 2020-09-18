@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
@@ -61,7 +62,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
 
     private void addFoldersToList(ArrayList<FolderViewModel> folderViewModels) {
         for (FolderViewModel folderViewModel : folderViewModels) {
-            Folder folder = getFolderWithRoom(folderViewModel, null);
+            Folder folder = getRootFolderWithRoom(folderViewModel);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
             foldersToPersist.add(folder);
@@ -69,9 +70,20 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     }
 
     private void addSubFolders(List<FolderViewModel> folderViewModels, Folder rootFolder) {
-        List<Folder> subFolders = getSubFoldersForRootFolder(folderViewModels, rootFolder);
-        addAllSubFoldersToRemove(rootFolder.getSubFolders(), subFolders);
-        rootFolder.setSubFolders(subFolders);
+        List<Folder> newSubFolders = getSubFoldersForRootFolder(folderViewModels, rootFolder);
+//        addAllSubFoldersToRemove(rootFolder.getSubFolders(), newSubFolders);
+        List<Folder> subFoldersToRemove = new ArrayList<>();
+        for (Folder subFolder : rootFolder.getSubFolders()) {
+            if (!newSubFolders.contains(subFolder))
+                subFoldersToRemove.add(subFolder);
+        }
+        rootFolder.getSubFolders().removeAll(subFoldersToRemove);
+        List<Folder> subFoldersToAdd = new ArrayList<>();
+        for (Folder subFolder : newSubFolders) {
+            if (!rootFolder.getSubFolders().contains(subFolder))
+                subFoldersToAdd.add(subFolder);
+        }
+        rootFolder.getSubFolders().addAll(subFoldersToAdd);
     }
 
     private void addAllSubFoldersToRemove(List<Folder> existingSubFolders, List<Folder> subFolders) {
@@ -83,7 +95,7 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     private List<Folder> getSubFoldersForRootFolder(List<FolderViewModel> folderViewModels, Folder rootFolder) {
         List<Folder> subFolders = new ArrayList<>();
         for (FolderViewModel folderViewModel : folderViewModels) {
-            Folder folder = getFolderWithRoom(folderViewModel, rootFolder);
+            Folder folder = getFolderByIdOrNewFolder(folderViewModel, rootFolder);
             addCueCardsToSet(folderViewModel, folder);
             addSubFolders(folderViewModel.subFolders, folder);
             subFolders.add(folder);
@@ -91,8 +103,8 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
         return subFolders;
     }
 
-    private Folder getFolderWithRoom(FolderViewModel folderViewModel, Folder rootFolder) {
-        return getFolderByIdOrNewFolder(folderViewModel, rootFolder).setRoom(room);
+    private Folder getRootFolderWithRoom(FolderViewModel folderViewModel) {
+        return getFolderByIdOrNewFolder(folderViewModel, null).setRoom(room);
     }
 
     private Folder getFolderByIdOrNewFolder(FolderViewModel folderViewModel, Folder rootFolder) {
@@ -118,16 +130,29 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
     }
 
     private void addCueCardsToSet(FolderViewModel setViewModel, Folder set) {
-        ArrayList<CueCard> cards = new ArrayList<>();
+        ArrayList<CueCard> newCards = new ArrayList<>();
         for (CueCardViewModel cardViewModel : setViewModel.cards) {
             CueCard cueCard = getCueCardFromViewModel(set, cardViewModel);
-            cards.add(cueCard);
+            newCards.add(cueCard);
         }
+
+        List<CueCard> cardsToDelete = new ArrayList<>();
         for (CueCard cueCard : set.getCueCards()) {
-            if (!cards.contains(cueCard))
-                cardsToRemove.add(cueCard);
+            if (!newCards.contains(cueCard))
+                cardsToDelete.add(cueCard);
         }
-        set.setCueCards(cards);
+        set.getCueCards().removeAll(cardsToDelete);
+
+        List<CueCard> cardsToAdd = new ArrayList<>();
+        for (CueCard cueCard : newCards) {
+            if (!set.getCueCards().contains(cueCard))
+                cardsToAdd.add(cueCard);
+        }
+        set.getCueCards().addAll(cardsToAdd);
+//        for (CueCard cueCard : set.getCueCards()) {
+//            if (!cards.contains(cueCard))
+//                cardsToRemove.add(cueCard);
+//        }
     }
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
@@ -138,8 +163,20 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
                 .setCardType(cardViewModel.cardType)
                 .setSet(set);
         cueCard.setCardLevels(getCardLevelsForCueCard(cardViewModel, cueCard))
-                .setAnswers(getAnswersFromViewModel(cardViewModel.answers, cueCard))
                 .setUid(cardViewModel.id);
+        List<Answer> newAnswers = getAnswersFromViewModel(cardViewModel.answers, cueCard);
+        List<Answer> answersToRemove = new ArrayList<>();
+        for (Answer answer : cueCard.getAnswers()) {
+            if (!newAnswers.contains(answer))
+                answersToRemove.add(answer);
+        }
+        cueCard.getAnswers().removeAll(answersToRemove);
+        List<Answer> answersToAdd = new ArrayList<>();
+        for (Answer answer : newAnswers) {
+            if (!cueCard.getAnswers().contains(answer))
+                answersToAdd.add(answer);
+        }
+        cueCard.getAnswers().addAll(answersToAdd);
         cueCard.setCreatedBy(loggedInUser);
         return cueCard;
     }
@@ -202,8 +239,8 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
             if (foldersToPersist.size() > 0)
                 folderGateway.saveList(foldersToPersist);
             removeFolders();
-            removeCueCards();
-            removeAnswers();
+//            removeCueCards();
+//            removeAnswers();
         } catch (InvalidArgumentException e) {
             throw new InvalidDataException();
         }

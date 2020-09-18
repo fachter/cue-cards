@@ -169,10 +169,6 @@ class SaveRoomUseCaseImplTest {
 
         roomUseCase.save(viewModel, loggedInUser);
 
-        verify(folderGatewayMock, times(1)).removeList(folderCaptor.capture());
-        List<Folder> foldersToDelete = folderCaptor.getValue();
-        assertEquals(1, foldersToDelete.size());
-        assertEquals(subFolder, foldersToDelete.get(0));
         verify(folderGatewayMock, times(1)).saveList(folderCaptor.capture());
         List<Folder> foldersToPersist = folderCaptor.getValue();
         assertEquals(1, foldersToPersist.size());

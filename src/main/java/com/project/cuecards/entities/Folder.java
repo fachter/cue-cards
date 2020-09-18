@@ -13,17 +13,17 @@ public class Folder extends BaseEntity {
     private AccessType accessType = AccessType.PRIVATE;
     private boolean isSet = false;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Folder rootFolder = null;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Room room = null;
 
-    @OneToMany(mappedBy = "rootFolder", cascade = CascadeType.ALL)
-    private List<Folder> subFolders = new ArrayList<>();
+    @OneToMany(mappedBy = "rootFolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Folder> subFolders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "set", cascade = CascadeType.ALL)
-    private List<CueCard> cueCards = new ArrayList<>();
+    @OneToMany(mappedBy = "set", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<CueCard> cueCards = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -65,18 +65,8 @@ public class Folder extends BaseEntity {
         return subFolders;
     }
 
-    public Folder setSubFolders(List<Folder> subFolders) {
-        this.subFolders = subFolders;
-        return this;
-    }
-
     public List<CueCard> getCueCards() {
         return cueCards;
-    }
-
-    public Folder setCueCards(List<CueCard> cueCards) {
-        this.cueCards = cueCards;
-        return this;
     }
 
     public Room getRoom() {

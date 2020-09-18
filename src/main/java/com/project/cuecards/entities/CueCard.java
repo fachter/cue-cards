@@ -14,7 +14,7 @@ public class CueCard extends BaseEntity {
     private String solution;
     private CardType cardType = CardType.FT;
 
-    @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
     @ManyToOne()
@@ -61,11 +61,6 @@ public class CueCard extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
-    }
-
-    public CueCard setAnswers(List<Answer> answers) {
-        this.answers = answers;
-        return this;
     }
 
     public CardType getCardType() {
