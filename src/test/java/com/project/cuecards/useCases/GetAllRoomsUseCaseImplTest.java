@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GetAllRoomsUseCaseImplTest {
 
+    private static final String DEFAULT_IMAGE_URL = "https://res.cloudinary.com/dilnshj2a/image/upload/v1600454278/ProfilePictures/xsfgjilvywtwnazbsz8g.jpg";
     private GetAllRoomsUseCase getAllRoomsUseCase;
     @Mock private RoomGateway roomGatewayMock;
     private final User loggedInUser = (User) new User()
@@ -46,8 +47,11 @@ class GetAllRoomsUseCaseImplTest {
     @Test
     public void givenOneRoom_thenReturnListWithOneRoomViewModel() {
         ArrayList<Room> rooms = new ArrayList<>();
-        rooms.add((Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L));
+        Room room = (Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L);
+        room.getAllowedUsers().add(loggedInUser);
+        rooms.add(room);
         when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
+        loggedInUser.setPictureUrl("test.url");
 
         List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
 
@@ -56,6 +60,45 @@ class GetAllRoomsUseCaseImplTest {
         assertEquals(3, roomViewModels.get(0).pictureNumber);
         assertEquals(123L, roomViewModels.get(0).id);
         assertEquals("testPassword", roomViewModels.get(0).password);
+        assertEquals("test.url", roomViewModels.get(0).user.get(0).userImage);
+    }
+
+    @Test
+    public void givenUserHasNoImageUrl_thenReturnDefaultUrl() {
+        ArrayList<Room> rooms = new ArrayList<>();
+        Room room = (Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L);
+        room.getAllowedUsers().add(loggedInUser);
+        rooms.add(room);
+        when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
+        loggedInUser.setPictureUrl(null);
+
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+
+        assertEquals(1, roomViewModels.size());
+        assertEquals("Test Room", roomViewModels.get(0).name);
+        assertEquals(3, roomViewModels.get(0).pictureNumber);
+        assertEquals(123L, roomViewModels.get(0).id);
+        assertEquals("testPassword", roomViewModels.get(0).password);
+        assertEquals(DEFAULT_IMAGE_URL, roomViewModels.get(0).user.get(0).userImage);
+    }
+
+    @Test
+    public void givenUserHasEmptyStringAsImageUrl_thenReturnDefaultUrl() {
+        ArrayList<Room> rooms = new ArrayList<>();
+        Room room = (Room) new Room().setName("Test Room").setPassword("testPassword").setPictureNumber(3).setId(123L);
+        room.getAllowedUsers().add(loggedInUser);
+        rooms.add(room);
+        when(roomGatewayMock.getAllAvailableForUser(loggedInUser)).thenReturn(rooms);
+        loggedInUser.setPictureUrl(" ");
+
+        List<RoomViewModel> roomViewModels = getAllRoomsUseCase.get(loggedInUser);
+
+        assertEquals(1, roomViewModels.size());
+        assertEquals("Test Room", roomViewModels.get(0).name);
+        assertEquals(3, roomViewModels.get(0).pictureNumber);
+        assertEquals(123L, roomViewModels.get(0).id);
+        assertEquals("testPassword", roomViewModels.get(0).password);
+        assertEquals(DEFAULT_IMAGE_URL, roomViewModels.get(0).user.get(0).userImage);
     }
 
     @Test

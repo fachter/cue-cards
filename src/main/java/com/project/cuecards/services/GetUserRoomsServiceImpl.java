@@ -66,9 +66,15 @@ public class GetUserRoomsServiceImpl implements GetUserRoomsService {
         for (User allowedUser : room.getAllowedUsers()) {
             UserViewModel allowedUserViewModel = new UserViewModel();
             allowedUserViewModel.nickName = allowedUser.getNickName();
-            allowedUserViewModel.userImage = allowedUser.getPictureUrl();
+            allowedUserViewModel.userImage = getPictureUrl(allowedUser.getPictureUrl());
             allowedUsers.add(allowedUserViewModel);
         }
         return allowedUsers;
+    }
+
+    private String getPictureUrl(String pictureUrl) {
+        if (pictureUrl == null || pictureUrl.trim().length() == 0)
+            return "https://res.cloudinary.com/dilnshj2a/image/upload/v1600454278/ProfilePictures/xsfgjilvywtwnazbsz8g.jpg";
+        return pictureUrl;
     }
 }
