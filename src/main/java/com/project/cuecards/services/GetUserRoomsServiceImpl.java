@@ -17,12 +17,14 @@ public class GetUserRoomsServiceImpl implements GetUserRoomsService {
 
     private final RoomGateway roomGateway;
     private final PrepareDataViewModelService prepareDataViewModelService;
+    private final UsersProfileDataService usersProfileDataService;
     private User loggedInUser;
 
     public GetUserRoomsServiceImpl(RoomGateway roomGateway,
-                                   PrepareDataViewModelService prepareDataViewModelService) {
+                                   PrepareDataViewModelService prepareDataViewModelService, UsersProfileDataService usersProfileDataService) {
         this.roomGateway = roomGateway;
         this.prepareDataViewModelService = prepareDataViewModelService;
+        this.usersProfileDataService = usersProfileDataService;
     }
 
     @Override
@@ -64,18 +66,8 @@ public class GetUserRoomsServiceImpl implements GetUserRoomsService {
     private List<UserViewModel> getAllowedUsers(Room room) {
         List<UserViewModel> allowedUsers = new ArrayList<>();
         for (User allowedUser : room.getAllowedUsers()) {
-            UserViewModel allowedUserViewModel = new UserViewModel();
-            allowedUserViewModel.id = allowedUser.getId();
-            allowedUserViewModel.nickName = allowedUser.getNickName();
-            allowedUserViewModel.userImage = getPictureUrl(allowedUser.getPictureUrl());
-            allowedUsers.add(allowedUserViewModel);
+            allowedUsers.add(usersProfileDataService.getUserViewModelFromUser(allowedUser));
         }
         return allowedUsers;
-    }
-
-    private String getPictureUrl(String pictureUrl) {
-        if (pictureUrl == null || pictureUrl.trim().length() == 0)
-            return "https://res.cloudinary.com/dilnshj2a/image/upload/v1600454278/ProfilePictures/xsfgjilvywtwnazbsz8g.jpg";
-        return pictureUrl;
     }
 }

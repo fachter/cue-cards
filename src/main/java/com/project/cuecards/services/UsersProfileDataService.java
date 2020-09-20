@@ -6,4 +6,6 @@ import com.project.cuecards.viewModels.UserViewModel;
 
 public interface UsersProfileDataService {
     UserViewModel get(User loggedInUser) throws InvalidDataException;
+
+    UserViewModel getUserViewModelFromUser(User loggedInUser);
 }

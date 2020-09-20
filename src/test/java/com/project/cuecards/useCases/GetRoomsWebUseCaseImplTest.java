@@ -11,6 +11,7 @@ import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.GetUserRoomsServiceImpl;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
 import com.project.cuecards.services.UsersHomeDataServiceImpl;
+import com.project.cuecards.services.UsersProfileDataServiceImpl;
 import com.project.cuecards.viewModels.CueCardViewModel;
 import com.project.cuecards.viewModels.DataViewModel;
 import com.project.cuecards.viewModels.FolderViewModel;
@@ -41,7 +42,7 @@ class GetRoomsWebUseCaseImplTest {
     void setUp() {
         useCase = new GetRoomsWebUseCaseImpl(
                 new UsersHomeDataServiceImpl(folderGatewayMock, new PrepareDataViewModelServiceImpl()),
-                new GetUserRoomsServiceImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl()));
+                new GetUserRoomsServiceImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl(), new UsersProfileDataServiceImpl()));
     }
 
     @Test

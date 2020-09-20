@@ -5,6 +5,7 @@ import com.project.cuecards.entities.*;
 import com.project.cuecards.gateways.RoomGateway;
 import com.project.cuecards.services.GetUserRoomsServiceImpl;
 import com.project.cuecards.services.PrepareDataViewModelServiceImpl;
+import com.project.cuecards.services.UsersProfileDataServiceImpl;
 import com.project.cuecards.viewModels.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class GetAllRoomsUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        getAllRoomsUseCase = new GetAllRoomsUseCaseImpl(new GetUserRoomsServiceImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl()));
+        getAllRoomsUseCase = new GetAllRoomsUseCaseImpl(new GetUserRoomsServiceImpl(roomGatewayMock, new PrepareDataViewModelServiceImpl(), new UsersProfileDataServiceImpl()));
     }
 
     @Test
@@ -157,6 +158,7 @@ class GetAllRoomsUseCaseImplTest {
         UserViewModel userViewModel = new UserViewModel();
         userViewModel.id = loggedInUser.getId();
         userViewModel.nickName = "Test Fullname";
+        userViewModel.username = "username";
         userViewModel.userImage = "test.url";
         expectedRoomViewModel.user.add(userViewModel);
         loggedInUser.setNickName("Test Fullname").setPictureUrl("test.url");

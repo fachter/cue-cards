@@ -11,15 +11,23 @@ public class UsersProfileDataServiceImpl implements UsersProfileDataService {
     public UserViewModel get(User loggedInUser) throws InvalidDataException {
         if (loggedInUser == null)
             throw new InvalidDataException();
-        return getUserViewModel(loggedInUser);
+        return getUserViewModelFromUser(loggedInUser);
     }
 
-    private UserViewModel getUserViewModel(User loggedInUser) {
+    @Override
+    public UserViewModel getUserViewModelFromUser(User user) {
         UserViewModel userViewModel = new UserViewModel();
-        userViewModel.username = loggedInUser.getUsername();
-        userViewModel.nickName = loggedInUser.getNickName();
-        userViewModel.userImage = loggedInUser.getPictureUrl();
-        userViewModel.email = loggedInUser.getEmail();
+        userViewModel.id = user.getId();
+        userViewModel.username = user.getUsername();
+        userViewModel.nickName = user.getNickName();
+        userViewModel.userImage = getPictureUrl(user.getPictureUrl());
+        userViewModel.email = user.getEmail();
         return userViewModel;
+    }
+
+    private String getPictureUrl(String pictureUrl) {
+        if (pictureUrl == null || pictureUrl.trim().length() == 0)
+            return "https://res.cloudinary.com/dilnshj2a/image/upload/v1600454278/ProfilePictures/xsfgjilvywtwnazbsz8g.jpg";
+        return pictureUrl;
     }
 }

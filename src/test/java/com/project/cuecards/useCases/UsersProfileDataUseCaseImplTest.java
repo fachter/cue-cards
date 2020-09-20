@@ -36,4 +36,17 @@ class UsersProfileDataUseCaseImplTest {
         assertEquals("url", userViewModel.userImage);
         assertEquals("felix@email.de", userViewModel.email);
     }
+
+    @Test
+    public void givenImageUrlIsNull_thenReturnDefault() throws Exception {
+        User user = (User) new User().setNickName("Felix").setEmail("felix@email.de").setPictureUrl(null)
+                .setUsername("username").setId(3L);
+
+        UserViewModel userViewModel = useCase.get(user);
+
+        assertEquals("username", userViewModel.username);
+        assertEquals("Felix", userViewModel.nickName);
+        assertEquals("https://res.cloudinary.com/dilnshj2a/image/upload/v1600454278/ProfilePictures/xsfgjilvywtwnazbsz8g.jpg", userViewModel.userImage);
+        assertEquals("felix@email.de", userViewModel.email);
+    }
 }
