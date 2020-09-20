@@ -5,5 +5,5 @@ import com.project.cuecards.viewModels.AuthenticationResponse;
 
 public interface Authenticate {
 
-    AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws Exception;
+    AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
 }

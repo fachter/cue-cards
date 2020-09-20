@@ -3,11 +3,10 @@ package com.project.cuecards.useCases;
 import com.project.cuecards.boundaries.CreateNewUser;
 import com.project.cuecards.entities.Role;
 import com.project.cuecards.entities.User;
-import com.project.cuecards.exceptions.InvalidDataException;
-import com.project.cuecards.exceptions.RoleDoesNotExistException;
-import com.project.cuecards.exceptions.UserAlreadyExistsException;
+import com.project.cuecards.exceptions.*;
 import com.project.cuecards.gateways.RoleGateway;
 import com.project.cuecards.gateways.UserGateway;
+import com.project.cuecards.services.ValidateUserDataInputServiceImpl;
 import com.project.cuecards.viewModels.RegisterRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +39,8 @@ class CreateNewUserUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        createNewUser = new CreateNewUserUseCase(userGatewayMock, passwordEncoderMock, roleGatewayMock);
+        createNewUser = new CreateNewUserUseCase(new ValidateUserDataInputServiceImpl(userGatewayMock),
+                userGatewayMock, passwordEncoderMock, roleGatewayMock);
     }
 
     @Test
@@ -69,12 +71,39 @@ class CreateNewUserUseCaseTest {
     }
 
     @Test
-    public void givenUsernameAlreadyExists_throwException() throws Exception {
-        doThrow(new UserAlreadyExistsException()).when(userGatewayMock).addUser(any(User.class));
+    public void givenUsernameAlreadyExists_thenThrowException() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest()
+                .setUsername("existingUsername")
+                .setPassword("test")
+                .setEmail("mail");
+        List<User> users = new ArrayList<>();
+        users.add(new User().setUsername("existingUsername").setPassword("pw").setEmail("newMail"));
+        when(userGatewayMock.getUserByUsernameOrEmail(eq("existingUsername"), anyString())).thenReturn(users);
+        Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> createNewUser.create(registerRequest));
+    }
+
+    @Test
+    public void givenEmailAlreadyExists_thenThrowException() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest()
                 .setUsername("existingUser")
                 .setPassword("test")
                 .setEmail("mail");
+        List<User> users = new ArrayList<>();
+        users.add(new User().setUsername("new").setPassword("pw").setEmail("mail"));
+        when(userGatewayMock.getUserByUsernameOrEmail(anyString(), eq("mail"))).thenReturn(users);
+        Assertions.assertThrows(EmailAlreadyExistsException.class, () -> createNewUser.create(registerRequest));
+    }
+
+    @Test
+    public void givenUsernameAndEmailAlreadyExists_thenThrowException() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest()
+                .setUsername("existingUsername")
+                .setPassword("test")
+                .setEmail("mail");
+        List<User> users = new ArrayList<>();
+        users.add(new User().setUsername("existingUsername").setPassword("pw").setEmail("newMail"));
+        users.add(new User().setUsername("newUsername").setPassword("pw").setEmail("mail"));
+        when(userGatewayMock.getUserByUsernameOrEmail(eq("existingUsername"), eq("mail"))).thenReturn(users);
         Assertions.assertThrows(UserAlreadyExistsException.class, () -> createNewUser.create(registerRequest));
     }
 

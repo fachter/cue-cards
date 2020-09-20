@@ -2,10 +2,13 @@ package com.project.cuecards.useCases;
 
 import com.project.cuecards.boundaries.ChangeUsersProfileDataUseCase;
 import com.project.cuecards.entities.User;
+import com.project.cuecards.exceptions.EmailAlreadyExistsException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
+import com.project.cuecards.exceptions.UsernameAlreadyExistsException;
 import com.project.cuecards.gateways.UserGateway;
 import com.project.cuecards.services.AuthenticateService;
+import com.project.cuecards.services.ValidateUserDataInputServiceImpl;
 import com.project.cuecards.viewModels.AuthenticationResponse;
 import com.project.cuecards.viewModels.ChangeUserViewModel;
 import com.project.cuecards.viewModels.UserViewModel;
@@ -33,7 +36,9 @@ class ChangeUsersProfileDataUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new ChangeUsersProfileDataUseCaseImpl(userGatewayMock, authenticateServiceMock, passwordEncoderMock);
+        useCase = new ChangeUsersProfileDataUseCaseImpl(userGatewayMock,
+                new ValidateUserDataInputServiceImpl(userGatewayMock), authenticateServiceMock,
+                passwordEncoderMock);
     }
 
     @Test
@@ -102,8 +107,43 @@ class ChangeUsersProfileDataUseCaseImplTest {
         userViewModel.email = "new@email";
         userViewModel.userImage = "newUrl";
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User().setUsername("newUsername"));
-        when(userGatewayMock.getUserByUsernameOrEmail("newUsername", "new@email")).thenReturn(users);
+        users.add(new User().setUsername("newUsername").setEmail("other@email"));
+        when(userGatewayMock.getUserByUsernameOrEmail(eq("newUsername"), anyString())).thenReturn(users);
+
+        Assertions.assertThrows(UsernameAlreadyExistsException.class, () -> useCase.change(userViewModel, loggedInUser));
+    }
+
+    @Test
+    public void givenEmailAlreadyExists_thenThrowException() throws Exception {
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
+        when(userGatewayMock.getUserById(123L)).thenReturn(user);
+        User loggedInUser = (User) new User().setId(123L);
+        ChangeUserViewModel userViewModel = new ChangeUserViewModel();
+        userViewModel.username = "newUsername";
+        userViewModel.nickName = "newName";
+        userViewModel.email = "new@email";
+        userViewModel.userImage = "newUrl";
+        ArrayList<User> users = new ArrayList<>();
+        users.add(new User().setUsername("otherUsername").setEmail("new@email"));
+        when(userGatewayMock.getUserByUsernameOrEmail(anyString(), eq("new@email"))).thenReturn(users);
+
+        Assertions.assertThrows(EmailAlreadyExistsException.class, () -> useCase.change(userViewModel, loggedInUser));
+    }
+
+
+    @Test
+    public void givenUsernameAndEmailAlreadyExists_thenThrowException() throws Exception {
+        User user = (User) new User().setNickName("oldName").setEmail("old@email").setPictureUrl("oldUrl").setUsername("oldUsername").setId(123L);
+        when(userGatewayMock.getUserById(123L)).thenReturn(user);
+        User loggedInUser = (User) new User().setId(123L);
+        ChangeUserViewModel userViewModel = new ChangeUserViewModel();
+        userViewModel.username = "newUsername";
+        userViewModel.nickName = "newName";
+        userViewModel.email = "new@email";
+        userViewModel.userImage = "newUrl";
+        ArrayList<User> users = new ArrayList<>();
+        users.add(new User().setUsername("newUsername").setEmail("new@email"));
+        when(userGatewayMock.getUserByUsernameOrEmail(eq("newUsername"), eq("new@email"))).thenReturn(users);
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () -> useCase.change(userViewModel, loggedInUser));
     }

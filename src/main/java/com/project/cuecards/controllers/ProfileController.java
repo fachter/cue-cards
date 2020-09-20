@@ -2,8 +2,10 @@ package com.project.cuecards.controllers;
 
 import com.project.cuecards.boundaries.ChangeUsersProfileDataUseCase;
 import com.project.cuecards.boundaries.UsersProfileDataUseCase;
+import com.project.cuecards.exceptions.EmailAlreadyExistsException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
+import com.project.cuecards.exceptions.UsernameAlreadyExistsException;
 import com.project.cuecards.services.LoggedInUserService;
 import com.project.cuecards.viewModels.AuthenticationResponse;
 import com.project.cuecards.viewModels.ChangeUserViewModel;
@@ -45,10 +47,14 @@ public class ProfileController {
             return new ResponseEntity<>(
                     changeProfileDataUseCase.change(userViewModel, LoggedInUserService.getLoggedInUser()),
                     HttpStatus.OK);
-        } catch (InvalidDataException e) {
-            return new ResponseEntity<>("Invalid User", HttpStatus.BAD_REQUEST);
         } catch (UserAlreadyExistsException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Username and Email already exist", HttpStatus.BAD_REQUEST);
+        } catch (EmailAlreadyExistsException e) {
+            return new ResponseEntity<>("Email already exists", HttpStatus.valueOf(406));
+        } catch (UsernameAlreadyExistsException e) {
+            return new ResponseEntity<>("Username already exists", HttpStatus.valueOf(409));
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>("Invalid Data", HttpStatus.valueOf(405));
         }
     }
 }

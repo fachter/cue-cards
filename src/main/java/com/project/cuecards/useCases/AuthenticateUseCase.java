@@ -24,7 +24,7 @@ public class AuthenticateUseCase implements Authenticate {
     }
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws Exception {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         return authenticateService.authenticate(authenticationRequest);
     }
 }

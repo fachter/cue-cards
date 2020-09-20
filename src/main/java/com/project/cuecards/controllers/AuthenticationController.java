@@ -2,8 +2,10 @@ package com.project.cuecards.controllers;
 
 import com.project.cuecards.boundaries.Authenticate;
 import com.project.cuecards.boundaries.CreateNewUser;
+import com.project.cuecards.exceptions.EmailAlreadyExistsException;
 import com.project.cuecards.exceptions.InvalidDataException;
 import com.project.cuecards.exceptions.UserAlreadyExistsException;
+import com.project.cuecards.exceptions.UsernameAlreadyExistsException;
 import com.project.cuecards.viewModels.AuthenticationRequest;
 import com.project.cuecards.viewModels.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,15 @@ public class AuthenticationController {
         try {
             createNewUser.create(registerRequest);
             return new ResponseEntity<>(authenticate.authenticate(new AuthenticationRequest(
-                    registerRequest.getUsername(), registerRequest.getPassword())), HttpStatus.ACCEPTED);
+                    registerRequest.getUsername(), registerRequest.getPassword())), HttpStatus.OK);
         } catch (UserAlreadyExistsException e) {
-            return new ResponseEntity<>(registerRequest, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Username and Email already exist", HttpStatus.BAD_REQUEST);
+        } catch (EmailAlreadyExistsException e) {
+            return new ResponseEntity<>("Email already exists", HttpStatus.valueOf(406));
+        } catch (UsernameAlreadyExistsException e) {
+            return new ResponseEntity<>("Username already exists", HttpStatus.valueOf(409));
         } catch (InvalidDataException e) {
-            return new ResponseEntity<>("Invalid data", HttpStatus.valueOf(406));
-        } catch (Exception e) {
-            return new ResponseEntity<>("Something went wrong with the login", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Invalid Data", HttpStatus.valueOf(405));
         }
     }
 

@@ -155,6 +155,7 @@ class GetAllRoomsUseCaseImplTest {
         expectedDataViewModel.folders.add(folderViewModel);
         expectedRoomViewModel.data = expectedDataViewModel;
         UserViewModel userViewModel = new UserViewModel();
+        userViewModel.id = loggedInUser.getId();
         userViewModel.nickName = "Test Fullname";
         userViewModel.userImage = "test.url";
         expectedRoomViewModel.user.add(userViewModel);
