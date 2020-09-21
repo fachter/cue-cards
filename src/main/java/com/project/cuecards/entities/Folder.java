@@ -1,6 +1,7 @@
 package com.project.cuecards.entities;
 
 import com.project.cuecards.enums.AccessType;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
