@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 public class Folder extends BaseEntity {
 
+    @Lob
     private String name;
     private AccessType accessType = AccessType.PRIVATE;
     private boolean isSet = false;

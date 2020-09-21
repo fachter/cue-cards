@@ -9,6 +9,7 @@ import java.util.Set;
 @Entity
 public class Room extends BaseEntity {
 
+    @Lob
     private String name;
     private String password;
     private int pictureNumber;

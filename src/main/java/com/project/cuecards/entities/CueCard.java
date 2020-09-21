@@ -9,13 +9,16 @@ import java.util.List;
 @Entity
 public class CueCard extends BaseEntity {
 
+    @Lob
     private String topic;
+    @Lob
     private String question;
+    @Lob
     private String solution;
     private CardType cardType = CardType.FT;
 
     @OneToMany(mappedBy = "cueCard", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
 
     @ManyToOne()
     private Folder set;

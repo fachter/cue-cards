@@ -1,11 +1,13 @@
 package com.project.cuecards.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class Answer extends BaseEntity {
 
+    @Lob
     private String text;
 
     @ManyToOne
