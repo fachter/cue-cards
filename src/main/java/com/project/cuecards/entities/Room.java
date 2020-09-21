@@ -1,5 +1,7 @@
 package com.project.cuecards.entities;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +12,7 @@ import java.util.Set;
 public class Room extends BaseEntity {
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String name;
     private String password;
     private int pictureNumber;

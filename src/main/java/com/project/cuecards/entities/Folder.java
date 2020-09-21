@@ -10,6 +10,7 @@ import java.util.List;
 public class Folder extends BaseEntity {
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String name;
     private AccessType accessType = AccessType.PRIVATE;
     private boolean isSet = false;

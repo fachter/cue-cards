@@ -1,6 +1,7 @@
 package com.project.cuecards.entities;
 
 import com.project.cuecards.enums.CardType;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,10 +11,13 @@ import java.util.List;
 public class CueCard extends BaseEntity {
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String topic;
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String question;
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String solution;
     private CardType cardType = CardType.FT;
 
