@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api")
 public class SynchronizeDataController {
@@ -40,7 +41,7 @@ public class SynchronizeDataController {
         return jwtUtil.extractUsername(token);
     }
 
-    @RequestMapping(value = "/save-users-data", method = RequestMethod.POST)
+    @PostMapping("/save-users-data")
     public ResponseEntity<?> saveUsersData(@RequestHeader String authorization, @RequestBody DataViewModel viewModel) {
         String usernameFromToken = getUsernameFromToken(authorization);
         try {
@@ -52,6 +53,4 @@ public class SynchronizeDataController {
         }
         return new ResponseEntity<>("Saved", HttpStatus.OK);
     }
-
-
 }

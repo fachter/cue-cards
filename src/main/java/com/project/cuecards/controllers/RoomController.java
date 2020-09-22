@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api")
 public class RoomController {
@@ -22,23 +23,35 @@ public class RoomController {
     private final AuthenticateToRoom authenticateToRoom;
     private final GetRoom getRoom;
     private final LeaveRoomUseCase leaveRoomUseCase;
+    private final GetRoomsWebUseCase getRoomsWebUseCase;
 
     public RoomController(GetAllRoomsUseCase getAllRoomsUseCase,
                           SaveRoomUseCase saveRoomUseCase,
                           AuthenticateToRoom authenticateToRoom,
                           GetRoom getRoom,
-                          LeaveRoomUseCase leaveRoomUseCase) {
+                          LeaveRoomUseCase leaveRoomUseCase,
+                          GetRoomsWebUseCase getRoomsWebUseCase) {
         this.getAllRoomsUseCase = getAllRoomsUseCase;
         this.saveRoomUseCase = saveRoomUseCase;
         this.authenticateToRoom = authenticateToRoom;
         this.getRoom = getRoom;
         this.leaveRoomUseCase = leaveRoomUseCase;
+        this.getRoomsWebUseCase = getRoomsWebUseCase;
     }
 
     @GetMapping("/get-available-rooms")
     public ResponseEntity<?> getAllRooms() {
         List<RoomViewModel> rooms = getAllRoomsUseCase.get(LoggedInUserService.getLoggedInUser());
         return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all-rooms-for-user")
+    public ResponseEntity<?> getRoomsForWeb() {
+        try {
+            return ResponseEntity.ok(getRoomsWebUseCase.get(LoggedInUserService.getLoggedInUser()));
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/leave-room/{roomId}")
