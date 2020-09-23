@@ -136,23 +136,26 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
             newCards.add(cueCard);
         }
 
+        removeCardsFromSet(set, newCards);
+        addMissingCardsToSet(set, newCards);
+    }
+
+    private void removeCardsFromSet(Folder set, ArrayList<CueCard> newCards) {
         List<CueCard> cardsToDelete = new ArrayList<>();
         for (CueCard cueCard : set.getCueCards()) {
             if (!newCards.contains(cueCard))
                 cardsToDelete.add(cueCard);
         }
         set.getCueCards().removeAll(cardsToDelete);
+    }
 
+    private void addMissingCardsToSet(Folder set, ArrayList<CueCard> newCards) {
         List<CueCard> cardsToAdd = new ArrayList<>();
         for (CueCard cueCard : newCards) {
             if (!set.getCueCards().contains(cueCard))
                 cardsToAdd.add(cueCard);
         }
         set.getCueCards().addAll(cardsToAdd);
-//        for (CueCard cueCard : set.getCueCards()) {
-//            if (!cards.contains(cueCard))
-//                cardsToRemove.add(cueCard);
-//        }
     }
 
     private CueCard getCueCardFromViewModel(Folder set, CueCardViewModel cardViewModel) {
@@ -165,20 +168,28 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
         cueCard.setCardLevels(getCardLevelsForCueCard(cardViewModel, cueCard))
                 .setUid(cardViewModel.id);
         List<Answer> newAnswers = getAnswersFromViewModel(cardViewModel.answers, cueCard);
-        List<Answer> answersToRemove = new ArrayList<>();
-        for (Answer answer : cueCard.getAnswers()) {
-            if (!newAnswers.contains(answer))
-                answersToRemove.add(answer);
-        }
-        cueCard.getAnswers().removeAll(answersToRemove);
+        removeAnswers(cueCard, newAnswers);
+        addMissingAnswers(cueCard, newAnswers);
+        cueCard.setCreatedBy(loggedInUser);
+        return cueCard;
+    }
+
+    private void addMissingAnswers(CueCard cueCard, List<Answer> newAnswers) {
         List<Answer> answersToAdd = new ArrayList<>();
         for (Answer answer : newAnswers) {
             if (!cueCard.getAnswers().contains(answer))
                 answersToAdd.add(answer);
         }
         cueCard.getAnswers().addAll(answersToAdd);
-        cueCard.setCreatedBy(loggedInUser);
-        return cueCard;
+    }
+
+    private void removeAnswers(CueCard cueCard, List<Answer> newAnswers) {
+        List<Answer> answersToRemove = new ArrayList<>();
+        for (Answer answer : cueCard.getAnswers()) {
+            if (!newAnswers.contains(answer))
+                answersToRemove.add(answer);
+        }
+        cueCard.getAnswers().removeAll(answersToRemove);
     }
 
     private List<CardLevel> getCardLevelsForCueCard(CueCardViewModel cardViewModel, CueCard cueCard) {
@@ -239,8 +250,6 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
             if (foldersToPersist.size() > 0)
                 folderGateway.saveList(foldersToPersist);
             removeFolders();
-//            removeCueCards();
-//            removeAnswers();
         } catch (InvalidArgumentException e) {
             throw new InvalidDataException();
         }
@@ -253,15 +262,6 @@ public class SaveDataViewModelServiceImpl implements SaveDataViewModelService {
         }
         if (foldersToRemove.size() > 0)
             folderGateway.removeList(foldersToRemove);
-    }
-
-    private void removeCueCards() throws InvalidArgumentException {
-        if (cardsToRemove.size() > 0)
-            cueCardGateway.removeList(cardsToRemove);
-    }
-
-    private void removeAnswers() throws InvalidArgumentException {
-        if (answersToRemove.size() > 0)
-            answerGateway.removeList(answersToRemove);
+        existingFolders.removeAll(foldersToRemove);
     }
 }

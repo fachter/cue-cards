@@ -175,4 +175,19 @@ class SaveRoomUseCaseImplTest {
         assertEquals(folder, foldersToPersist.get(0));
         assertEquals(0, folder.getSubFolders().size());
     }
+
+    @Test
+    public void givenRoomHasFoldersToDelete_thenRemoveThemFromList() throws Exception {
+        Room room = (Room) new Room().setName("raum").setId(1L);
+        room.getFolders().add((Folder) new Folder().setName("Folder1").setUid("folderUid").setId(123L));
+        RoomViewModel viewModel = new RoomViewModel();
+        viewModel.id = 1L;
+        viewModel.data = new DataViewModel();
+        viewModel.name = "Raum";
+        when(roomGatewayMock.getById(1L)).thenReturn(room);
+
+        roomUseCase.save(viewModel, loggedInUser);
+
+        assertEquals(0, room.getFolders().size());
+    }
 }

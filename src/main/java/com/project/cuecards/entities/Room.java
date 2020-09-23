@@ -17,8 +17,8 @@ public class Room extends BaseEntity {
     private String password;
     private int pictureNumber;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<Folder> folders = new ArrayList<>();
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Folder> folders = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -48,11 +48,6 @@ public class Room extends BaseEntity {
 
     public List<Folder> getFolders() {
         return folders;
-    }
-
-    public Room setFolders(List<Folder> folders) {
-        this.folders = folders;
-        return this;
     }
 
     public Set<User> getAllowedUsers() {
