@@ -28,10 +28,15 @@ public class GetRoomsWebUseCaseImpl implements GetRoomsWebUseCase {
         if (loggedInUser == null)
             throw new InvalidDataException();
         List<RoomViewModel> roomViewModels = getUserRoomsService.get(loggedInUser);
+        roomViewModels.add(0, getMeinRaum(loggedInUser));
+        return roomViewModels;
+    }
+
+    private RoomViewModel getMeinRaum(User loggedInUser) {
         RoomViewModel roomViewModel = new RoomViewModel();
+        roomViewModel.id = 0L;
         roomViewModel.name = "Mein Raum";
         roomViewModel.data = usersHomeDataService.get(loggedInUser);
-        roomViewModels.add(0, roomViewModel);
-        return roomViewModels;
+        return roomViewModel;
     }
 }

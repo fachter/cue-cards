@@ -62,6 +62,7 @@ class GetRoomsWebUseCaseImplTest {
 
         assertEquals(2, roomViewModels.size());
         assertEquals("Mein Raum", roomViewModels.get(0).name);
+        assertEquals(0, roomViewModels.get(0).id);
     }
 
     @Test
