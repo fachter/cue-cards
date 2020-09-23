@@ -38,8 +38,8 @@ public class SaveUsersHomeDataUseCase implements SaveUsersHomeData {
         saveDataViewModelService.saveOrUpdateDataViewModel(viewModel, getExistingFolders(user), user);
         if (viewModel.lastModified != null) {
             user.setLastModifiedDateTime(viewModel.lastModified);
-            userGateway.saveUser(user);
         }
+        userGateway.saveUser(user);
     }
 
     private List<Folder> getExistingFolders(User user) {
